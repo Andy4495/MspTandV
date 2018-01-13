@@ -1,7 +1,9 @@
 /* -----------------------------------------------------------------
-   MspTandV Library
-    01/10/2018 - A.T. Original
+   MspTandV Library Header
+   https://gitlab.com/Andy4495
+   MIT License
 
+   01/10/2018 - A.T. - Original
 */
 /*
    Library to retrieve chip temperature and Vcc measurement.
@@ -25,6 +27,7 @@
 
 class MspTemp {
 public:
+  MspTemp();
   void read();
   int getTempCalibratedC();
   int getTempUncalibratedC();
@@ -35,6 +38,8 @@ private:
   int CalibratedTempF;      // Degrees * 10
   int UncalibratedTempC;    // Degrees * 10
   int UncalibratedTempF;    // Degrees * 10
+  long Tc;                  // Temperature calibration factor
+  long uncalAdcScaleFactor; // Scaling factor used in uncalibrated calc
 };
 
 class MspVcc {

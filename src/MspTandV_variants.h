@@ -1,6 +1,9 @@
 /* -----------------------------------------------------------------
-   MspTandV Library
-    01/10/2018 - A.T. Original
+   MspTandV Library - Processor Specific Definitions
+   https://gitlab.com/Andy4495
+   MIT License
+
+   01/10/2018 - A.T. - Original
 */
 /*
    This file contains the processor-specific definitions for the

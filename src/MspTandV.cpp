@@ -1,6 +1,9 @@
 /* -----------------------------------------------------------------
-   MspTandV Library
-    01/10/2018 - A.T. Original
+   MspTandV Library Implementation
+   https://gitlab.com/Andy4495
+   MIT License
+
+   01/10/2018 - A.T. - Original
 
 */
 /*
@@ -40,19 +43,25 @@
 #include "MspTandV.h"
 #include "Arduino.h"
 
+MspTemp::MspTemp() {
+  /// Tc and uncalAdcScaleFactor should be in the constructor and stored with the object.
+  Tc = 550000L / ((long)*(int*)ADC_CAL_T85 - (long)*(int*)ADC_CAL_T30);
+
+  // Used in the uncalibrated temp calculation to avoid overlowing long
+  // 100,000 scaling factor * voltage ref in deci-Volts / # of ADC steps
+  uncalAdcScaleFactor = 100000L * (long)TEMP_REF_DV / (long)ADC_STEPS;
+
+  CalibratedTempC = 0;      // Degrees * 10
+  CalibratedTempF = 0;      // Degrees * 10
+  UncalibratedTempC = 0;    // Degrees * 10
+  UncalibratedTempF = 0;    // Degrees * 10
+
+}
 
 void MspTemp::read() {
     long c2ftemp;
-    long uncalAdcScaleFactor;
-    long Tc;
     int  ADCraw;
 
-    /// Tc and uncalAdcScaleFactor should be in the constructor and stored with the object.
-    Tc = 550000L / ((long)*(int*)ADC_CAL_T85 - (long)*(int*)ADC_CAL_T30);
-
-    // Used in the uncalibrated temp calculation to avoid overlowing long
-    // 100,000 scaling factor * voltage ref in deci-Volts / # of ADC steps
-    uncalAdcScaleFactor = 100000L * (long)TEMP_REF_DV / (long)ADC_STEPS;
     // MSP430 internal temp sensor
     analogReference(TEMP_VREF);
     ADCraw = analogRead(TEMPSENSOR_CHAN);
@@ -85,7 +94,7 @@ int MspTemp::getTempUncalibratedF() {
 
 void MspVcc::read(){
     long msp430mV, msp430mV_unc, ADCcalibrated;
-    int  ADCraw, ADCraw1V5;
+    unsigned int  ADCraw, ADCraw1V5;
 
     // *********
     // The ordering of these calculations should be reversed:
@@ -98,75 +107,43 @@ void MspVcc::read(){
     // First try the higher reference voltage
     analogReference(VCC_REF1);
     ADCraw = analogRead(VCC_CHAN);
-    /// DEBUG
-    Serial.print("Vcc ADC Raw: ");
-    Serial.println(ADCraw);
     // Need calculation to be Long int due to mV scaling
     // Multiply by 1000 to convert to mV
     // Multiple by 2 to convert Vcc/2 to VCC
     // Divide by 10 since VCC_REF_DV is scaled by 10
     // --> 1000 * 2 / 10 = 200
     msp430mV_unc = ADCraw * 200L * (long)VCC_REF1_DV;
-    /// DEBUG
-    Serial.print("msp430mv_unc: ");
-    Serial.println(msp430mV_unc);
     msp430mV_unc = msp430mV_unc / (long)ADC_STEPS;
-    /// DEBUG
-    Serial.print("msp430mv_unc (2nd calc): ");
-    Serial.println(msp430mV_unc);
     if (msp430mV_unc < VCC_XOVER) {
-      /// DEBUG
-      Serial.println("Uncalibrated Voltage under crossover point.");
       analogReference(VCC_REF2);
       ADCraw1V5 = analogRead(VCC_CHAN);
       msp430mV_unc = ADCraw1V5 * 200L * (long)VCC_REF2_DV;
       msp430mV_unc = msp430mV_unc / (long)ADC_STEPS;
     }
     UncalibratedVcc = msp430mV_unc;
-    /// DEBUG
-    Serial.print("UncalibratedVcc: ");
-    Serial.println(UncalibratedVcc);
-
 
     // Shifting by 13 instead of 15 to retain precision through final calculation
-    ADCcalibrated = ((long)ADCraw * (*(unsigned int*)ADC_CAL_REF1_FACTOR)) >> 13;
-    /// DEBUG
-    Serial.print("ADCcalibrated: ");
-    Serial.println(ADCcalibrated);
+    ADCcalibrated = ((unsigned long)ADCraw * (*(unsigned int*)ADC_CAL_REF1_FACTOR)) >> 13;
     ADCcalibrated = (ADCcalibrated * (*(unsigned int*)ADC_CAL_GAIN_FACTOR)) >> 13;
-    /// DEBUG
-    Serial.print("ADCcalibrated: ");
-    Serial.println(ADCcalibrated);
     // Need to shift the offset by 4 to match scaling on previous calculations
     ADCcalibrated = ADCcalibrated + ((*(int*)ADC_CAL_OFFSET_FACTOR) << 4);
-    /// DEBUG
-    Serial.print("ADCcalibrated: ");
-    Serial.println(ADCcalibrated);
+
     // mV = 1000 mV/V * Vref * 2 / 1023
     // --> The extra "2" term above is because we are measuring Vcc/2,
     //     so we need to scale it back to Vcc for final value
     // VCC_REF1_DV is scaled by 10, so mV multipler is 200 instead of 2000
-    msp430mV = (ADCcalibrated * 200L * (long)VCC_REF1_DV / (long)ADC_STEPS) + 0x0008L; // Add 8 to round up if bit 3 is 1
-    /// DEBUG
-    Serial.print("msp430mV: ");
-    Serial.println(msp430mV);
+    msp430mV = ((unsigned long)ADCcalibrated * 200UL * (unsigned long)VCC_REF1_DV / (unsigned long)ADC_STEPS) + 0x0008UL; // Add 8 to round up if bit 3 is 1
     msp430mV = (msp430mV >> 4); // Shift 4 to adjust for scaling above
-    /// DEBUG
-    Serial.print("msp430mV: ");
-    Serial.println(msp430mV);
     if (msp430mV < VCC_XOVER) {
-      /// DEBUG
-      Serial.println("Uncalibrated Voltage under crossover point.");
-      ADCcalibrated = ((long)ADCraw1V5 * (*(unsigned int*)ADC_CAL_REF2_FACTOR)) >> 13;
+      analogReference(VCC_REF2);
+      ADCraw1V5 = analogRead(VCC_CHAN);
+      ADCcalibrated = ((unsigned long)ADCraw1V5 * (*(unsigned int*)ADC_CAL_REF2_FACTOR)) >> 13;
       ADCcalibrated = (ADCcalibrated * (*(unsigned int*)ADC_CAL_GAIN_FACTOR)) >> 13;
       ADCcalibrated = ADCcalibrated + ((*(int*)ADC_CAL_OFFSET_FACTOR) << 4);
-      msp430mV = (ADCcalibrated * 200L * (long)VCC_REF2_DV/ (long)ADC_STEPS) + 0x0008L;  // 3000 instead of 5000 because of 1.5V reference
+      msp430mV = ((unsigned long)ADCcalibrated * 200UL * (unsigned long)VCC_REF2_DV / (unsigned long)ADC_STEPS) + 0x0008UL;  // 3000 instead of 5000 because of 1.5V reference
       msp430mV = (msp430mV >> 4);
     }
     CalibratedVcc = msp430mV;
-    /// DEBUG
-    Serial.print("CalibratedVcc: ");
-    Serial.println(CalibratedVcc);
 }
 
 int MspVcc::getVccCalibrated(){
