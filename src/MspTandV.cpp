@@ -49,42 +49,22 @@ void MspTemp::read() {
 
     /// Tc and uncalAdcScaleFactor should be in the constructor and stored with the object.
     Tc = 550000L / ((long)*(int*)ADC_CAL_T85 - (long)*(int*)ADC_CAL_T30);
-    /// DEBUG
-    Serial.print("Tc: ");
-    Serial.println(Tc);
 
     // Used in the uncalibrated temp calculation to avoid overlowing long
     // 100,000 scaling factor * voltage ref in deci-Volts / # of ADC steps
     uncalAdcScaleFactor = 100000L * (long)TEMP_REF_DV / (long)ADC_STEPS;
-    /// DEBUG
-    Serial.print("uncalAdcScaleFactor: ");
-    Serial.println(uncalAdcScaleFactor);
     // MSP430 internal temp sensor
     analogReference(TEMP_VREF);
     ADCraw = analogRead(TEMPSENSOR_CHAN);
     ADCraw = analogRead(TEMPSENSOR_CHAN);
-    /// DEBUG
-    Serial.print("Temp ADC Raw: ");
-    Serial.println(ADCraw);
     CalibratedTempC = (Tc * (ADCraw - ((long)*(int*)ADC_CAL_T30)) + 300000L) / 1000L;
     c2ftemp = CalibratedTempC * 9L;
     CalibratedTempF = (c2ftemp / 5L) + 320L;
     // VSENSOR_UNCAL and TC_UNCAL are scaled by 100,000
     // Numerator has an extra factor of 10 to return 10ths of degrees
     UncalibratedTempC = (ADCraw * uncalAdcScaleFactor - (long)VSENSOR_UNCAL * 10L) / (long)TC_UNCAL;
-    /// DEBUG
-    Serial.print("UncalibratedTempC: ");
-    Serial.println(UncalibratedTempC);
     c2ftemp = UncalibratedTempC * 9L;
-    /// DEBUG
-    Serial.print("c2ftemp: ");
-    Serial.println(c2ftemp);    UncalibratedTempF = (c2ftemp / 5L) + 320L;
-    /// DEBUG
-    Serial.print("UncalibratedTempC: ");
-    Serial.println(UncalibratedTempC);
-//     ((((float)ADCraw * 1.5 / 1023.0) - 0.986) / 0.00355) * 1.8 + 32.0;
-// Floating point, in F:     sensordata.MSP_T_uncalibrated = ((((float)ADCraw * 1.5 / 1023.0) - 0.986) / 0.00355) * 1.8 + 32.0;
-
+    UncalibratedTempF = (c2ftemp / 5L) + 320L;
 }
 
 int MspTemp::getTempCalibratedC() {
@@ -122,7 +102,11 @@ void MspVcc::read(){
     Serial.print("Vcc ADC Raw: ");
     Serial.println(ADCraw);
     // Need calculation to be Long int due to mV scaling
-    msp430mV_unc = ADCraw * 2000L * (long)VCC_REF1_DV;
+    // Multiply by 1000 to convert to mV
+    // Multiple by 2 to convert Vcc/2 to VCC
+    // Divide by 10 since VCC_REF_DV is scaled by 10
+    // --> 1000 * 2 / 10 = 200
+    msp430mV_unc = ADCraw * 200L * (long)VCC_REF1_DV;
     /// DEBUG
     Serial.print("msp430mv_unc: ");
     Serial.println(msp430mV_unc);
@@ -135,7 +119,7 @@ void MspVcc::read(){
       Serial.println("Uncalibrated Voltage under crossover point.");
       analogReference(VCC_REF2);
       ADCraw1V5 = analogRead(VCC_CHAN);
-      msp430mV_unc = ADCraw1V5 * 2000L * (long)VCC_REF2_DV;
+      msp430mV_unc = ADCraw1V5 * 200L * (long)VCC_REF2_DV;
       msp430mV_unc = msp430mV_unc / (long)ADC_STEPS;
     }
     UncalibratedVcc = msp430mV_unc;
@@ -158,11 +142,11 @@ void MspVcc::read(){
     /// DEBUG
     Serial.print("ADCcalibrated: ");
     Serial.println(ADCcalibrated);
-    // mV = 1000 mV/V * 2.5 Vref * 2 / 1023
-    // --> The extra "2" term above is because we are measuring Vcc/2 on channel 11,
+    // mV = 1000 mV/V * Vref * 2 / 1023
+    // --> The extra "2" term above is because we are measuring Vcc/2,
     //     so we need to scale it back to Vcc for final value
-    // To keep integer math, combine 2*2.5*1000 -> 5000
-    msp430mV = (ADCcalibrated * 2000L * (long)VCC_REF1_DV / (long)ADC_STEPS) + 0x0008L; // Add 8 to round up if bit 3 is 1
+    // VCC_REF1_DV is scaled by 10, so mV multipler is 200 instead of 2000
+    msp430mV = (ADCcalibrated * 200L * (long)VCC_REF1_DV / (long)ADC_STEPS) + 0x0008L; // Add 8 to round up if bit 3 is 1
     /// DEBUG
     Serial.print("msp430mV: ");
     Serial.println(msp430mV);
@@ -176,7 +160,7 @@ void MspVcc::read(){
       ADCcalibrated = ((long)ADCraw1V5 * (*(unsigned int*)ADC_CAL_REF2_FACTOR)) >> 13;
       ADCcalibrated = (ADCcalibrated * (*(unsigned int*)ADC_CAL_GAIN_FACTOR)) >> 13;
       ADCcalibrated = ADCcalibrated + ((*(int*)ADC_CAL_OFFSET_FACTOR) << 4);
-      msp430mV = (ADCcalibrated * 2000L * (long)VCC_REF2_DV/ (long)ADC_STEPS) + 0x0008L;  // 3000 instead of 5000 because of 1.5V reference
+      msp430mV = (ADCcalibrated * 200L * (long)VCC_REF2_DV/ (long)ADC_STEPS) + 0x0008L;  // 3000 instead of 5000 because of 1.5V reference
       msp430mV = (msp430mV >> 4);
     }
     CalibratedVcc = msp430mV;
