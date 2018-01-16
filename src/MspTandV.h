@@ -3,7 +3,7 @@
    https://gitlab.com/Andy4495
    MIT License
 
-   01/10/2018 - A.T. - Original
+   01/16/2018 - A.T. - Original
 */
 /*
    Library to retrieve chip temperature and Vcc measurement.
@@ -25,10 +25,12 @@
 
 #include "MspTandV_variants.h"
 
+enum MEAS_TYPE {CAL_AND_UNCAL, CAL_ONLY};
+
 class MspTemp {
 public:
   MspTemp();
-  void read();
+  void read(int meas_type = CAL_AND_UNCAL);
   int getTempCalibratedC();
   int getTempUncalibratedC();
   int getTempCalibratedF();
@@ -44,7 +46,8 @@ private:
 
 class MspVcc {
 public:
-  void read();
+  MspVcc();
+  void read(int meas_type = CAL_AND_UNCAL);
   int getVccCalibrated();
   int getVccUncalibrated();
 

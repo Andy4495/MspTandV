@@ -3,7 +3,7 @@
    https://gitlab.com/Andy4495
    MIT License
 
-   01/10/2018 - A.T. - Original
+   01/16/2018 - A.T. - Original
 
 */
 /*
@@ -33,7 +33,11 @@
         MspVcc  myMspVcc;
    2. Take a reading:
         myMspTemp.read();
+        - Optional parameter "CAL_ONLY" saves a little processing time
+          by only calculating calibrated temperature.
         myMspVcc.read();
+        - Optional parameter "CAL_ONLY" saves a little processing time
+          by only calculating calibrated Vcc.
    3. Get the results:
         TempF = myMspTemp.getTempCalibrated(FAHRENHEIT); // Degrees Fahrenheit * 10
         TempC = MyMspTemp.getTempCalibrated(CELSIUS);  // Degrees Celsius * 10
@@ -44,7 +48,7 @@
 #include "Arduino.h"
 
 MspTemp::MspTemp() {
-  /// Tc and uncalAdcScaleFactor should be in the constructor and stored with the object.
+  // Tc and uncalAdcScaleFactor calculated in constructor and stored with object.
   Tc = 550000L / ((long)*(int*)ADC_CAL_T85 - (long)*(int*)ADC_CAL_T30);
 
   // Used in the uncalibrated temp calculation to avoid overlowing long
@@ -58,7 +62,7 @@ MspTemp::MspTemp() {
 
 }
 
-void MspTemp::read() {
+void MspTemp::read(int meas_type) {
     long c2ftemp;
     int  ADCraw;
 
@@ -69,11 +73,13 @@ void MspTemp::read() {
     CalibratedTempC = (Tc * (ADCraw - ((long)*(int*)ADC_CAL_T30)) + 300000L) / 1000L;
     c2ftemp = CalibratedTempC * 9L;
     CalibratedTempF = (c2ftemp / 5L) + 320L;
-    // VSENSOR_UNCAL and TC_UNCAL are scaled by 100,000
-    // Numerator has an extra factor of 10 to return 10ths of degrees
-    UncalibratedTempC = (ADCraw * uncalAdcScaleFactor - (long)VSENSOR_UNCAL * 10L) / (long)TC_UNCAL;
-    c2ftemp = UncalibratedTempC * 9L;
-    UncalibratedTempF = (c2ftemp / 5L) + 320L;
+    if (meas_type == CAL_AND_UNCAL) {
+      // VSENSOR_UNCAL and TC_UNCAL are scaled by 100,000
+      // Numerator has an extra factor of 10 to return 10ths of degrees
+      UncalibratedTempC = (ADCraw * uncalAdcScaleFactor - (long)VSENSOR_UNCAL * 10L) / (long)TC_UNCAL;
+      c2ftemp = UncalibratedTempC * 9L;
+      UncalibratedTempF = (c2ftemp / 5L) + 320L;
+    }
 }
 
 int MspTemp::getTempCalibratedC() {
@@ -92,7 +98,12 @@ int MspTemp::getTempUncalibratedF() {
       return UncalibratedTempF;
 }
 
-void MspVcc::read(){
+MspVcc::MspVcc() {
+  CalibratedVcc = 0;
+  UncalibratedVcc = 0;
+}
+
+void MspVcc::read(int meas_type){
     long msp430mV, msp430mV_unc, ADCcalibrated;
     unsigned int  ADCraw, ADCraw1V5;
 
@@ -107,20 +118,22 @@ void MspVcc::read(){
     // First try the higher reference voltage
     analogReference(VCC_REF1);
     ADCraw = analogRead(VCC_CHAN);
-    // Need calculation to be Long int due to mV scaling
-    // Multiply by 1000 to convert to mV
-    // Multiple by 2 to convert Vcc/2 to VCC
-    // Divide by 10 since VCC_REF_DV is scaled by 10
-    // --> 1000 * 2 / 10 = 200
-    msp430mV_unc = ADCraw * 200L * (long)VCC_REF1_DV;
-    msp430mV_unc = msp430mV_unc / (long)ADC_STEPS;
-    if (msp430mV_unc < VCC_XOVER) {
-      analogReference(VCC_REF2);
-      ADCraw1V5 = analogRead(VCC_CHAN);
-      msp430mV_unc = ADCraw1V5 * 200L * (long)VCC_REF2_DV;
+    if (meas_type == CAL_AND_UNCAL) {
+      // Need calculation to be Long int due to mV scaling
+      // Multiply by 1000 to convert to mV
+      // Multiple by 2 to convert Vcc/2 to VCC
+      // Divide by 10 since VCC_REF_DV is scaled by 10
+      // --> 1000 * 2 / 10 = 200
+      msp430mV_unc = ADCraw * 200L * (long)VCC_REF1_DV;
       msp430mV_unc = msp430mV_unc / (long)ADC_STEPS;
-    }
+      if (msp430mV_unc < VCC_XOVER) {
+        analogReference(VCC_REF2);
+        ADCraw1V5 = analogRead(VCC_CHAN);
+        msp430mV_unc = ADCraw1V5 * 200L * (long)VCC_REF2_DV;
+        msp430mV_unc = msp430mV_unc / (long)ADC_STEPS;
+      }
     UncalibratedVcc = msp430mV_unc;
+    }
 
     // Shifting by 13 instead of 15 to retain precision through final calculation
     ADCcalibrated = ((unsigned long)ADCraw * (*(unsigned int*)ADC_CAL_REF1_FACTOR)) >> 13;
