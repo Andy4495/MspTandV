@@ -4,6 +4,7 @@
    MIT License
 
    01/16/2018 - A.T. - Original
+   01/17/2018 - A.T. - Add support for VCC_TYPE of VCC
 
 */
 /*
@@ -39,9 +40,9 @@
         - Optional parameter "CAL_ONLY" saves a little processing time
           by only calculating calibrated Vcc.
    3. Get the results:
-        TempF = myMspTemp.getTempCalibrated(FAHRENHEIT); // Degrees Fahrenheit * 10
-        TempC = MyMspTemp.getTempCalibrated(CELSIUS);  // Degrees Celsius * 10
-        Vcc_mV = MyMspVcc.getVccCalibrated();
+        TempF = myMspTemp.getTempCalibratedF();    // Degrees Fahrenheit * 10
+        TempC = MyMspTemp.getTempCalibratedC();    // Degrees Celsius * 10
+        Vcc_mV = MyMspVcc.getVccCalibrated();      // Voltage in mV
 */
 
 #include "MspTandV.h"
@@ -51,7 +52,7 @@ MspTemp::MspTemp() {
   // Tc and uncalAdcScaleFactor calculated in constructor and stored with object.
   Tc = 550000L / ((long)*(int*)ADC_CAL_T85 - (long)*(int*)ADC_CAL_T30);
 
-  // Used in the uncalibrated temp calculation to avoid overlowing long
+  // Used in the uncalibrated temp calculation to avoid overflowing long
   // 100,000 scaling factor * voltage ref in deci-Volts / # of ADC steps
   uncalAdcScaleFactor = 100000L * (long)TEMP_REF_DV / (long)ADC_STEPS;
 
@@ -101,62 +102,117 @@ int MspTemp::getTempUncalibratedF() {
 MspVcc::MspVcc() {
   CalibratedVcc = 0;
   UncalibratedVcc = 0;
+
+  // My sample of FR4133 processors are all missing the 1.5V Reference
+  // Factor calibration value in the TLV structure -- it is set to
+  // a default value of 65535.
+  // If the value appears to be unprogrammed (0xFFFF), then set it to
+  // a default value of "1" which is represented by 0x8000 since it is
+  // scaled by 32768
+  if (*(unsigned int*)ADC_CAL_REF1_FACTOR == 0xFFFF)
+    Vref1Calibration = 0x8000;
+  else
+    Vref1Calibration = *(unsigned int*)ADC_CAL_REF1_FACTOR;
 }
 
 void MspVcc::read(int meas_type){
     long msp430mV, msp430mV_unc, ADCcalibrated;
-    unsigned int  ADCraw, ADCraw1V5;
+    unsigned int  ADCraw, ADCrawRef2;
 
-    // *********
-    // The ordering of these calculations should be reversed:
-    //   -- Use the calibrated value to decide if 2nd measurement
-    //      with lower ref voltage is needed. Then calculate calibrated
-    //      and uncalibrated at same time.
-    // *********
-    // This code currently only works with VCC_TYPE of VCCDIV2
-    // *********
+    //
+    // **** VCC_TYPE == VCCDIV2 *****
+    // For VCC_TYPE of VCCDIV2, we are measuring Vcc/2 wrt the
+    // internal voltage references. Then multiply the result by 2
+    // in order to get back to Vcc.
     // First try the higher reference voltage
-    analogReference(VCC_REF1);
-    ADCraw = analogRead(VCC_CHAN);
-    if (meas_type == CAL_AND_UNCAL) {
-      // Need calculation to be Long int due to mV scaling
-      // Multiply by 1000 to convert to mV
-      // Multiple by 2 to convert Vcc/2 to VCC
-      // Divide by 10 since VCC_REF_DV is scaled by 10
-      // --> 1000 * 2 / 10 = 200
-      msp430mV_unc = ADCraw * 200L * (long)VCC_REF1_DV;
-      msp430mV_unc = msp430mV_unc / (long)ADC_STEPS;
-      if (msp430mV_unc < VCC_XOVER) {
-        analogReference(VCC_REF2);
-        ADCraw1V5 = analogRead(VCC_CHAN);
-        msp430mV_unc = ADCraw1V5 * 200L * (long)VCC_REF2_DV;
+    if (VCC_TYPE == VCCDIV2){
+      analogReference(VCC_REF1);
+      ADCraw = analogRead(VCC_CHAN);
+      if (meas_type == CAL_AND_UNCAL) {
+        // Need calculation to be Long int due to mV scaling
+        // Multiply by 1000 to convert to mV
+        // Multiply by 2 to convert Vcc/2 to VCC
+        // Divide by 10 since VCC_REF_DV is scaled by 10
+        // --> 1000 * 2 / 10 = 200
+        msp430mV_unc = ADCraw * 200L * (long)VCC_REF1_DV;
         msp430mV_unc = msp430mV_unc / (long)ADC_STEPS;
+        if (msp430mV_unc < VCC_XOVER) {
+          analogReference(VCC_REF2);
+          ADCrawRef2 = analogRead(VCC_CHAN);
+          msp430mV_unc = ADCrawRef2 * 200L * (long)VCC_REF2_DV;
+          msp430mV_unc = msp430mV_unc / (long)ADC_STEPS;
+        }
+        UncalibratedVcc = msp430mV_unc;
       }
-    UncalibratedVcc = msp430mV_unc;
-    }
-
-    // Shifting by 13 instead of 15 to retain precision through final calculation
-    ADCcalibrated = ((unsigned long)ADCraw * (*(unsigned int*)ADC_CAL_REF1_FACTOR)) >> 13;
-    ADCcalibrated = (ADCcalibrated * (*(unsigned int*)ADC_CAL_GAIN_FACTOR)) >> 13;
-    // Need to shift the offset by 4 to match scaling on previous calculations
-    ADCcalibrated = ADCcalibrated + ((*(int*)ADC_CAL_OFFSET_FACTOR) << 4);
-
-    // mV = 1000 mV/V * Vref * 2 / 1023
-    // --> The extra "2" term above is because we are measuring Vcc/2,
-    //     so we need to scale it back to Vcc for final value
-    // VCC_REF1_DV is scaled by 10, so mV multipler is 200 instead of 2000
-    msp430mV = ((unsigned long)ADCcalibrated * 200UL * (unsigned long)VCC_REF1_DV / (unsigned long)ADC_STEPS) + 0x0008UL; // Add 8 to round up if bit 3 is 1
-    msp430mV = (msp430mV >> 4); // Shift 4 to adjust for scaling above
-    if (msp430mV < VCC_XOVER) {
-      analogReference(VCC_REF2);
-      ADCraw1V5 = analogRead(VCC_CHAN);
-      ADCcalibrated = ((unsigned long)ADCraw1V5 * (*(unsigned int*)ADC_CAL_REF2_FACTOR)) >> 13;
+      // Shifting by 13 instead of 15 to retain precision through final calculation
+      ADCcalibrated = ((unsigned long)ADCraw * (Vref1Calibration)) >> 13;
       ADCcalibrated = (ADCcalibrated * (*(unsigned int*)ADC_CAL_GAIN_FACTOR)) >> 13;
+      // Need to shift the offset by 4 to match scaling on previous calculations
       ADCcalibrated = ADCcalibrated + ((*(int*)ADC_CAL_OFFSET_FACTOR) << 4);
-      msp430mV = ((unsigned long)ADCcalibrated * 200UL * (unsigned long)VCC_REF2_DV / (unsigned long)ADC_STEPS) + 0x0008UL;  // 3000 instead of 5000 because of 1.5V reference
-      msp430mV = (msp430mV >> 4);
+
+      // mV = 1000 mV/V * Vref * 2 / 1023
+      // --> The extra "2" term above is because we are measuring Vcc/2,
+      //     so we need to scale it back to Vcc for final value
+      // VCC_REF1_DV is scaled by 10, so mV multipler is 200 instead of 2000
+      msp430mV = ((unsigned long)ADCcalibrated * 200UL * (unsigned long)VCC_REF1_DV / (unsigned long)ADC_STEPS) + 0x0008UL; // Add 8 to round up if bit 3 is 1
+      msp430mV = (msp430mV >> 4); // Shift 4 to adjust for scaling above
+      if (msp430mV < VCC_XOVER) {
+        analogReference(VCC_REF2);
+        ADCrawRef2 = analogRead(VCC_CHAN);
+        ADCcalibrated = ((unsigned long)ADCrawRef2 * (*(unsigned int*)ADC_CAL_REF2_FACTOR)) >> 13;
+        ADCcalibrated = (ADCcalibrated * (*(unsigned int*)ADC_CAL_GAIN_FACTOR)) >> 13;
+        ADCcalibrated = ADCcalibrated + ((*(int*)ADC_CAL_OFFSET_FACTOR) << 4);
+        msp430mV = ((unsigned long)ADCcalibrated * 200UL * (unsigned long)VCC_REF2_DV / (unsigned long)ADC_STEPS) + 0x0008UL;
+        msp430mV = (msp430mV >> 4);
+      }
+      CalibratedVcc = msp430mV;
     }
-    CalibratedVcc = msp430mV;
+    else {   // **** VCC_TYPE == VCC *****
+      // For VCC_TYPE of VCC, we are measuring the internal voltage
+      // reference wrt Vcc.
+      // Vref = ADCraw * Vcc / ADC_STEPS
+      //  --> Vcc = Vref * ADC_STEPS / ADCraw
+      analogReference(VCC_REF1);
+      ADCraw = analogRead(VCC_CHAN);
+      if (meas_type == CAL_AND_UNCAL) {
+        // Measure ADC reference voltage wrt Vcc
+        // VREF = ADCraw * Vcc / 1023
+        // --> Vcc = VREF * 1023 / ADCraw
+        // Need calculation to be Long int due to mV scaling
+        // Multiply by 1000 to convert to mV
+        // Divide by 10 since VCC_REF_DV is scaled by 10
+        // --> 1000 * / 10 = 100
+        msp430mV_unc = (long)VCC_REF1_DV * 100L * (long)ADC_STEPS;
+        msp430mV_unc = msp430mV_unc / (long)ADCraw;
+        if (msp430mV_unc < VCC_XOVER) {
+          analogReference(VCC_REF2);
+          ADCrawRef2 = analogRead(VCC_CHAN);
+          msp430mV_unc = (long)VCC_REF2_DV * 100L * (long)ADC_STEPS;
+          msp430mV_unc = msp430mV_unc / (long)ADCrawRef2;
+        }
+        UncalibratedVcc = msp430mV_unc;
+      }
+      // Shifting by 13 instead of 15 to retain precision through final calculation
+      ADCcalibrated = ((unsigned long)ADCraw * (Vref1Calibration)) >> 13;
+      ADCcalibrated = (ADCcalibrated * (*(unsigned int*)ADC_CAL_GAIN_FACTOR)) >> 13;
+      // Need to shift the offset by 4 to match scaling on previous calculations
+      ADCcalibrated = ADCcalibrated + ((*(int*)ADC_CAL_OFFSET_FACTOR) << 4);
+      // Similar calculation as above, except using calibrated ADC reading
+      ADCcalibrated = ADCcalibrated + 0x0008UL; // Add 8 to round up if bit 3 is 1
+      ADCcalibrated = ADCcalibrated >> 4; // Un-scale the ADC value before dividing
+      msp430mV = (((unsigned long)VCC_REF1_DV * 100UL * (unsigned long) ADC_STEPS) / (unsigned long) ADCcalibrated);
+      if (msp430mV < VCC_XOVER) {
+        analogReference(VCC_REF2);
+        ADCrawRef2 = analogRead(VCC_CHAN);
+        ADCcalibrated = ((unsigned long)ADCrawRef2 * (*(unsigned int*)ADC_CAL_REF2_FACTOR)) >> 13;
+        ADCcalibrated = (ADCcalibrated * (*(unsigned int*)ADC_CAL_GAIN_FACTOR)) >> 13;
+        ADCcalibrated = ADCcalibrated + ((*(int*)ADC_CAL_OFFSET_FACTOR) << 4);
+        ADCcalibrated = ADCcalibrated + 0x0008UL; // Add 8 to round up if bit 3 is 1
+        ADCcalibrated = ADCcalibrated >> 4; // Un-scale the ADC value before dividing
+        msp430mV = (((unsigned long)VCC_REF2_DV * 100UL * (unsigned long) ADC_STEPS) / (unsigned long) ADCcalibrated);
+      }
+      CalibratedVcc = msp430mV;
+    }
 }
 
 int MspVcc::getVccCalibrated(){

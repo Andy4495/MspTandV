@@ -4,6 +4,7 @@
    MIT License
 
    01/16/2018 - A.T. - Original
+   01/18/2018 - A.T. - Add support for other processor variants
 */
 /* -----------------------------------------------------------------
 
@@ -38,6 +39,26 @@ void setup() {
 #if defined(__MSP430F5529__)
   Serial.println("msp430f5529");
 #define BOARD_LED GREEN_LED
+#endif
+
+#if defined(__MSP430FR4133__)
+  Serial.println("msp430fr4133");
+#define BOARD_LED LED2
+#endif
+
+#if defined(__MSP430FR6989__)
+  Serial.println("msp430fr6989");
+#define BOARD_LED GREEN_LED
+#endif
+
+#if defined(__MSP430FR2433__)
+  Serial.println("msp430fr2433");
+#define BOARD_LED LED2
+#endif
+
+#if defined(__MSP430FR5969__)
+  Serial.println("msp430fr5969");
+#define BOARD_LED LED2
 #endif
 
   pinMode(BOARD_LED, OUTPUT);
