@@ -54,7 +54,6 @@ public:
 private:
   int CalibratedVcc;       // milliVolts
   int UncalibratedVcc;     // milliVolts
-public: /// DEBUG -- temporarily make public
   unsigned int Vref1Calibration;
 };
 
