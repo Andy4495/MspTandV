@@ -5,6 +5,7 @@
 
    01/16/2018 - A.T. - Original
    01/17/2018 - A.T. - Add FR4133 support
+   01/18/2018 - A.T. - Add FR6989 support
 */
 /*
    This file contains the processor-specific definitions for the
@@ -162,9 +163,58 @@
 #define ADC_CAL_GAIN_FACTOR    0x1a16
 #define ADC_CAL_OFFSET_FACTOR  0x1a18
 
+#elif defined(__MSP430FR6989__)
+/* MSP430FR6989 - Reference Information
+   Device datasheet doc number:           slas789
+      ADC electrical characteristics:     Table 5-34
+      Calibration data memory location:   6.12
+      Uncalibrated temp measurement       Table 5-32
+   Family guide doc number:               slau367
+      ADC description                     Ch. 34
+      Calibrated temp measurement         1.14.3.3
+   ADC type:                              ADC12_B
+   Voltage references available:          INTERNAL1V5
+                                          INTERNAL2V0
+                                          INTERNAL2V5
+   Min Vcc for default system freq:       1.8 V
+   Min Vcc for INTERNAL2V5:               2.7 V (not used with this library)
+   Min Vcc for INTERNAL2V0:               2.2 V
+   Min Vcc for INTERNAL1V2:               1.8 V
+
+  Notes:
+  - VCC_XOVER value chosen to ensure valid Vcc measurement with either
+    reference.
+  - If there is no label defined in Energia for an ADC input channel parameter,
+    then need to add 128 to the channel number from the datasheet.
+  - Voltage reference used for temperature measurement is chosen to use
+    the lowest reference voltage to allow operation over widest Vcc
+    range. This simplifies coding so that a crossover point isn't needed
+    for temperature measurements.
+
+*/
+#define TEMPSENSOR_CHAN        TEMPSENSOR   // A30
+#define TEMP_VREF              INTERNAL1V2
+#define TEMP_REF_DV            12           // deciVolts
+#define VCC_TYPE               VCCDIV2      // Measure Vcc/2 wrt internal voltage reference
+#define VCC_CHAN               159          // 128+31: A31 "Battery Monitor" AVcc/2
+#define VCC_REF1               INTERNAL2V0
+#define VCC_REF2               INTERNAL1V2
+#define VCC_REF1_DV            20        // deciVolts
+#define VCC_REF2_DV            12        // deciVolts
+#define VCC_XOVER              2300      // milliVolts
+#define VSENSOR_UNCAL          70000     // mV, Scaled * 100,000
+#define TC_UNCAL               250       // mV/C, Scaled * 100,000
+#define TC_DELTA               55        // Degrees C between calibration points
+#define ADC_STEPS              4095
+#define ADC_CAL_T30            0x1a1a    // 1.2V reference
+#define ADC_CAL_T85            0x1a1c    // 1.2V reference
+#define ADC_CAL_REF1_FACTOR    0x1a2a    // 2.0 V reference
+#define ADC_CAL_REF2_FACTOR    0x1a28    // 1.2 V reference
+#define ADC_CAL_GAIN_FACTOR    0x1a16
+#define ADC_CAL_OFFSET_FACTOR  0x1a18
 
 // Other processor types to add:
-// FR2433, FR6989, FR5969
+// FR2433, FR5969
 #else
 #error "MCU type not defined"
 #endif

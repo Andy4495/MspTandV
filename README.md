@@ -11,9 +11,9 @@ and know when it is time to change batteries.
 This library makes use of factory-programmed calibration settings unique to
 each MSP430 chip, and runs all its calculations using integer math.
 
-Currently supported MSP430 processors: G2553, F5529, FR4133.
+Currently supported MSP430 processors: G2553, F5529, FR4133, FR6989.
 
-Future support planned for: FR2433, FR6989, FR5969.  
+Future support planned for: FR2433, FR5969.  
 
 Usage
 -----
@@ -117,3 +117,5 @@ References
 + MSP430F5529 [Device Datasheet] (http://www.ti.com/lit/ds/symlink/msp430f5529.pdf).
 + MSP430FR4133 [Family User's Guide] (http://www.ti.com/lit/ug/slau445g/slau445g.pdf).
 + MSP430FR4133 [Device Datasheet] (http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf).
++ MSP430FR6989 [Family User's Guide] (http://www.ti.com/lit/ug/slau367o/slau367o.pdf)
++ MSP430FR6989 [Device Datasheet] (http://www.ti.com/lit/ds/symlink/msp430fr6989.pdf)
