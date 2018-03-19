@@ -11,7 +11,8 @@ Getting accurate Vcc readings is particularly useful when powering a project
 with batteries, so that you can get an indication of the current battery level
 and know when it is time to change batteries.
 
-Supported MSP430 processor types: G2553, F5529, FR4133, FR6989, FR2433, FR5969.
+Supported MSP430 processor types: F5529, FR4133, FR6989, FR2433, FR5969, G2553 (see Note below
+for considerations with G2553 low voltage operation).
 
 Usage
 -----
@@ -107,17 +108,31 @@ The value of TCsensor given in the FR4133 datasheet appears to be off
 by a factor of 10. The value used by the library is adjusted to account
 for this. This only affects the uncalibrated temperature reading.
 
+Note on G2553 Low Voltage Operation
+-----------------------------------
+
+Per the MSP430G2553 [Device Datasheet](http://www.ti.com/lit/ug/slau144j/slau144j.pdf)
+Figure 1, the G2553 should only be run at
+16 Mhz with a supply voltage of 3.3 V. In order to run it at lower voltages
+(e.g. in a battery-operated setup), you will need to configure a lower system
+frequency. The device and all its peripherals can be run at a supply voltage
+as low as 2.2 V when running at 8 MHz. By default, Energia sets the G2553
+system frequency at 16 Mhz. To run it a 8 MHz, the `boards.txt` file needs
+to be edited to add an 8 MHz entry. See
+[this discussion](https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/)
+for tips on editing `boards.txt` to change the system frequency.
+
 References
 ---------------------
 
-+ Texas Instruments E2E Forum thread regarding [ADC calibration] (https://e2e.ti.com/support/microcontrollers/msp430/f/166/t/204428)
-+ MSP430G2553 [Family User's Guide] (http://www.ti.com/lit/ug/slau144j/slau144j.pdf).
-+ MSP430G2553 [Device Datasheet] (http://www.ti.com/lit/ds/symlink/msp430g2553.pdf).
-+ MSP430F5529 [Family User's Guide] (http://www.ti.com/lit/pdf/slau208).
-+ MSP430F5529 [Device Datasheet] (http://www.ti.com/lit/ds/symlink/msp430f5529.pdf).
-+ MSP430FR4133 and MSP430FR2433 [Family User's Guide] (http://www.ti.com/lit/ug/slau445g/slau445g.pdf).
-+ MSP430FR4133 [Device Datasheet] (http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf).
-+ MSP430FR6989 and MSP430FR5969 [Family User's Guide] (http://www.ti.com/lit/ug/slau367o/slau367o.pdf).
-+ MSP430FR6989 [Device Datasheet] (http://www.ti.com/lit/ds/symlink/msp430fr6989.pdf).
-+ MSP430FR2433 [Device Datasheet] (http://www.ti.com/lit/ds/symlink/msp430fr2433.pdf).
-+ MSP430FR5969 [Device Datasheet] (http://www.ti.com/lit/ds/symlink/msp430fr5969.pdf).
++ Texas Instruments E2E Forum thread regarding [ADC calibration](https://e2e.ti.com/support/microcontrollers/msp430/f/166/t/204428)
++ MSP430G2553 [Family User's Guide](http://www.ti.com/lit/ug/slau144j/slau144j.pdf).
++ MSP430G2553 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430g2553.pdf).
++ MSP430F5529 [Family User's Guide](http://www.ti.com/lit/pdf/slau208).
++ MSP430F5529 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430f5529.pdf).
++ MSP430FR4133 and MSP430FR2433 [Family User's Guide](http://www.ti.com/lit/ug/slau445g/slau445g.pdf).
++ MSP430FR4133 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf).
++ MSP430FR6989 and MSP430FR5969 [Family User's Guide](http://www.ti.com/lit/ug/slau367o/slau367o.pdf).
++ MSP430FR6989 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr6989.pdf).
++ MSP430FR2433 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr2433.pdf).
++ MSP430FR5969 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr5969.pdf).

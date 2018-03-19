@@ -36,7 +36,8 @@ Notes on choice of values:
    ADC type:                              ADC10
    Voltage references available:          INTERNAL2V5
                                           INTERNAL1V5
-   Min Vcc for default system freq:       2.2 V
+   Min Vcc for default system freq:       3.3 V    (16 MHz)
+   Min Vcc for lower system freq:         2.2 V    (8 MHz or lower)
    Min Vcc for INTERNAL2V5:               2.9 V
    Min Vcc for INTERNAL1V5:               2.2 V
 */
