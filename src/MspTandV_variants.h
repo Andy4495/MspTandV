@@ -7,6 +7,7 @@
    01/17/2018 - A.T. - Add FR4133 support
    01/18/2018 - A.T. - Add FR6989 support
    01/22/2018 - A.T. - Add FR2433 and FR5969 support
+   03/19/2018 - A.T. - Add G2452 support
 */
 /*
    This file contains the processor-specific definitions for the
@@ -62,6 +63,44 @@ Notes on choice of values:
 #define ADC_CAL_GAIN_FACTOR    0x10dc   // 0x10da + CAL_ADC_GAIN_FACTOR
 #define ADC_CAL_OFFSET_FACTOR  0x10de   // 0x10da + CAL_ADC_OFFSET
 
+#elif defined(__MSP430G2452__)
+/* MSP430G2452 - Reference Information
+   Device datasheet doc number:           slas722
+      ADC electrical characteristics:     pp. 32-33, 35
+      Calibration data memory location:   p. 12
+   Family guide doc number:               slau144
+      ADC description                     Ch. 22
+      Uncalibrated temp measurement:      Ch. 22.2.8
+      Calibrated temp measurement         Ch 24.2.2.1
+   ADC type:                              ADC10
+   Voltage references available:          INTERNAL2V5
+                                          INTERNAL1V5
+   Min Vcc for default system freq:       3.3 V    (16 MHz)
+   Min Vcc for lower system freq:         2.2 V    (8 MHz or lower)
+   Min Vcc for INTERNAL2V5:               2.9 V
+   Min Vcc for INTERNAL1V5:               2.2 V
+*/
+#define TEMPSENSOR_CHAN        TEMPSENSOR
+#define TEMP_VREF              INTERNAL1V5
+#define TEMP_REF_DV            15       // deciVolts
+#define VCC_TYPE               VCCDIV2  // Measure Vcc/2 wrt internal voltage reference
+#define VCC_CHAN               139       // 128 + 11
+#define VCC_REF1               INTERNAL2V5
+#define VCC_REF2               INTERNAL1V5
+#define VCC_REF1_DV            25       // deciVolts
+#define VCC_REF2_DV            15       // deciVolts
+#define VCC_XOVER              2950     // milliVolts
+#define VSENSOR_UNCAL          98600    // mV, Scaled * 100,000
+#define TC_UNCAL               355      // mV/C, Scaled * 100,000
+#define TC_DELTA               55       // Degrees C between calibration points
+#define ADC_STEPS              1023
+#define ADC_CAL_T30            0x10e2   // 0x10da + CAL_ADC_15T30  // 1.5V reference
+#define ADC_CAL_T85            0x10e4   // 0x10da + CAL_ADC_15T85  // 1.5V reference
+#define ADC_CAL_REF1_FACTOR    0x10e6   // 0x10da + CAL_ADC_25VREF_FACTOR
+#define ADC_CAL_REF2_FACTOR    0x10e0   // 0x10da + CAL_ADC_15VREF_FACTOR
+#define ADC_CAL_GAIN_FACTOR    0x10dc   // 0x10da + CAL_ADC_GAIN_FACTOR
+#define ADC_CAL_OFFSET_FACTOR  0x10de   // 0x10da + CAL_ADC_OFFSET
+
 #elif defined(__MSP430F5529__)
 /* MSP430F5529 - Reference Information
    Device datasheet doc number:           slas590
@@ -76,8 +115,8 @@ Notes on choice of values:
                                           INTERNAL2V0 (not used in this library)
                                           INTERNAL1V5
    Min Vcc for default system freq:       2.4 V
-   Min Vcc for INTERNAL2V5:               2.8 V
-   Min Vcc for INTERNAL2V0:               2.3 V (not used in this library)
+   Min Vcc for INTERNAL2V5:               2.8 V (not used in this library)
+   Min Vcc for INTERNAL2V0:               2.3 V
    Min Vcc for INTERNAL1V5:               2.2 V
 */
 #define TEMPSENSOR_CHAN        TEMPSENSOR
