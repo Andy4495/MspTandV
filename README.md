@@ -13,7 +13,7 @@ and know when it is time to change batteries.
 
 Supported MSP430 processor types: F5529, FR4133, FR6989, FR2433, FR5969, G2553, G2452.
 
-**See Note below for considerations with G2553/G2452 low voltage operation.**
+**See [Note](#note-on-g2553g2452-low-voltage-operation) below for considerations with G2553/G2452 low voltage operation.**
 
 Usage
 -----
