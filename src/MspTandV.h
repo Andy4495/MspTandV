@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------
    MspTandV Library Header
-   https://gitlab.com/Andy4495
+   https://github.com/Andy4495/MspTandV
    MIT License
 
    01/16/2018 - A.T. - Original
