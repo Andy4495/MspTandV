@@ -64,6 +64,9 @@ In general, the library makes use of the following key formulas. The internal im
 * The above equation assumes a linear voltage response to temperature changes
 and uses two factory-programmed calibration readings to determine the ADC to temperature relationship.
 
+Based on my experience using a relatively small sample size of MSP430 chips, I have found
+that calibrating the Vcc reading had an impact of a few 10s of mV. However, I would still recommend using calibrated Vcc measurements over uncalibrated values.
+
 #### Voltage: ####
 
 First, calibrate the ADC reading:
@@ -86,12 +89,10 @@ Solving for Vcc where Vref is a known value:
 
     Vcc = Vref * ADC_STEPS / ADC_Calibrated
 
-In my experience using a small sample size of MSP430 chips, I have found
+In my experience, I have found
 that using a calibrated measurement for temperature is
 absolutely necessary, as the uncalibrated and calibrated temperature readings
-across chips can vary significantly (10s of degrees Fahrenheit).
-
-Calibrating the Vcc reading had an impact of a few 10s of mV at the most.
+can vary significantly (10s of degrees Fahrenheit).
 
 Note on FR4133 Usage
 --------------------
@@ -121,7 +122,7 @@ References
 + MSP430G2452 [Device Datasheet][2].
 + MSP430F5529 [Family User's Guide](http://www.ti.com/lit/pdf/slau208).
 + MSP430F5529 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430f5529.pdf).
-+ MSP430FR4133 and MSP430FR2433 [Family User's Guide](http://www.ti.com/lit/ug/slau445h/slau445h.pdf).
++ MSP430FR4133 and MSP430FR2433 [Family User's Guide](http://www.ti.com/lit/ug/slau445i/slau445i.pdf).
 + MSP430FR4133 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf).
 + MSP430FR2433 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr2433.pdf).
 + MSP430FR6989 and MSP430FR5969 [Family User's Guide](http://www.ti.com/lit/ug/slau367o/slau367o.pdf).
