@@ -64,8 +64,7 @@ In general, the library makes use of the following key formulas. The internal im
 * The above equation assumes a linear voltage response to temperature changes
 and uses two factory-programmed calibration readings to determine the ADC to temperature relationship.
 
-Based on my experience using a relatively small sample size of MSP430 chips, I have found
-that calibrating the Vcc reading had an impact of a few 10s of mV. However, I would still recommend using calibrated Vcc measurements over uncalibrated values.
+In my experience, I have found that using a calibrated measurement for temperature is absolutely necessary, as the uncalibrated and calibrated temperature readings can vary significantly (10s of degrees Fahrenheit).
 
 #### Voltage: ####
 
@@ -89,10 +88,7 @@ Solving for Vcc where Vref is a known value:
 
     Vcc = Vref * ADC_STEPS / ADC_Calibrated
 
-In my experience, I have found
-that using a calibrated measurement for temperature is
-absolutely necessary, as the uncalibrated and calibrated temperature readings
-can vary significantly (10s of degrees Fahrenheit).
+Based on my experience using a relatively small sample size of MSP430 chips, I have found that calibrating the Vcc reading had an impact of a few 10s of mV. However, I would still recommend using calibrated Vcc measurements over uncalibrated values.
 
 Note on FR4133 Usage
 --------------------
