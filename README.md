@@ -101,7 +101,7 @@ The value of TCsensor given in the FR4133 datasheet appears to be off
 by a factor of 10. The value used by the library is adjusted to account
 for this. This only affects the uncalibrated temperature reading.
 
-Notes on G2553/G2452 Low Voltage Operation
+Note on G2553/G2452 Low Voltage Operation
 -----------------------------------------
 
 Per Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets, the devices should only be run at 16 Mhz with a supply voltage of 3.3 V. In order to run at lower voltages (e.g. in a battery-operated setup), you will need to configure a lower system frequency. The devices can be run at a supply voltage as low as 2.2 V when running at 8 MHz. By default, Energia sets the G2553 and G2452 system frequency at 16 Mhz. To run the device at 8 MHz, the `boards.txt` file needs to be edited to add an 8 MHz entry. See [this discussion](https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/)
