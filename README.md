@@ -41,16 +41,16 @@ Take a reading:
 Get the results:
 
         TempF = myMspTemp.getTempCalibratedF();    // Degrees Fahrenheit * 10
-        TempC = MyMspTemp.getTempCalibratedC();    // Degrees Celsius * 10
-        Vcc_mV = MyMspVcc.getVccCalibrated();      // Voltage in mV
+        TempC = myMspTemp.getTempCalibratedC();    // Degrees Celsius * 10
+        Vcc_mV = myMspVcc.getVccCalibrated();      // Voltage in mV
 
-All return values are of type `int.`
+All return values are of type `int`.
 
 Implementation Details
 ----------------------
 
 The library uses formulas contained in various MPS430 datasheets and Family
-User Guides from Texas Instruments. See the file "MspTandV_variants.h" for
+User Guides from Texas Instruments. See the file `MspTandV_variants.h` for
 specific details on parameters and technical documents used for each
 processor type.
 
@@ -97,14 +97,14 @@ In my sample of four FR4133 processors (Rev B), none of them had the "1.5 V
 Reference Factor" calibration value programmed in the TLV structure. If the
 library detects an unprogrammed Reference Factor value on an FR4133 device, it uses a calibration factor of "1", which has the effect of ignoring the reference voltage portion of the Vcc calibration.
 
-The value of TCsensor given in the FR4133 datasheet appears to be off
+The value of TCsensor given in the [FR4133 datasheet][3] appears to be off
 by a factor of 10. The value used by the library is adjusted to account
 for this. This only affects the uncalibrated temperature reading.
 
 Note on G2553/G2452 Low Voltage Operation
 -----------------------------------------
 
-Per Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets, the devices should only be run at 16 Mhz with a supply voltage of 3.3 V. In order to run at lower voltages (e.g. in a battery-operated setup), you will need to configure a lower system frequency. The devices can be run at a supply voltage as low as 2.2 V when running at 8 MHz. By default, Energia sets the G2553 and G2452 system frequency at 16 Mhz. To run the device at 8 MHz, the `boards.txt` file needs to be edited to add an 8 MHz entry. See [this discussion](https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/)
+The G2553 and G2452 device types can only run at a 16 Mhz system clock frequency when powered at 3.3 V. See Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets. When operating with supply voltages lower than 3.3 V (e.g. in a battery-operated setup), you will need to configure a lower system clock frequency. The devices can be run at a supply voltage as low as 2.2 V when running at 8 MHz. By default, Energia sets the G2553 and G2452 system clock frequency at 16 Mhz. To run the device at 8 MHz, the `boards.txt` file needs to be edited to add an 8 MHz entry. See [this discussion](https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/)
 for tips on editing `boards.txt` to change the system frequency.
 
 Also, the internal 2.5V reference on the G2 devices needs a Vcc of at least 2.9V for proper operation. To allow proper Vcc readings in a low-voltage (e.g. battery-operated) environment, the library takes a voltage reading from the lower voltage reference first. It only takes a reading from the higher voltage reference if Vcc is high enough for proper operation of the higher voltage reference. This applies to all devices that use the "Vcc/2" ADC input  channel.
@@ -119,11 +119,12 @@ References
 + MSP430F5529 [Family User's Guide](http://www.ti.com/lit/pdf/slau208).
 + MSP430F5529 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430f5529.pdf).
 + MSP430FR4133 and MSP430FR2433 [Family User's Guide](http://www.ti.com/lit/ug/slau445i/slau445i.pdf).
-+ MSP430FR4133 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf).
++ MSP430FR4133 [Device Datasheet][3].
 + MSP430FR2433 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr2433.pdf).
-+ MSP430FR6989 and MSP430FR5969 [Family User's Guide](http://www.ti.com/lit/ug/slau367o/slau367o.pdf).
++ MSP430FR6989 and MSP430FR5969 [Family User's Guide](https://www.ti.com/lit/ug/slau367p/slau367p.pdf).
 + MSP430FR6989 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr6989.pdf).
 + MSP430FR5969 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr5969.pdf).
 
 [1]: http://www.ti.com/lit/ds/symlink/msp430g2553.pdf
 [2]: http://www.ti.com/lit/ds/symlink/msp430g2112.pdf
+[3]: http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf
