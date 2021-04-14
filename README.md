@@ -125,6 +125,12 @@ References
 + MSP430FR6989 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr6989.pdf).
 + MSP430FR5969 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr5969.pdf).
 
+License
+-------
+The software and other files in this repository are released under what is commonly called the [MIT License][100]. See the file [`LICENSE.txt`][101] in this repository.
+
 [1]: http://www.ti.com/lit/ds/symlink/msp430g2553.pdf
 [2]: http://www.ti.com/lit/ds/symlink/msp430g2112.pdf
 [3]: http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf
+[100]: https://choosealicense.com/licenses/mit/
+[101]: ./LICENSE.txt
