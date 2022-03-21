@@ -1,5 +1,8 @@
 # MspTandV Library
 
+[![Arduino Compile Sketches](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml)
+[![Check Markdown Links](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml)
+
 This Energia library provides simple, easy-to-use functions to return the
 calibrated internal temperature and Vcc level on supported MSP430 processor types.
 
