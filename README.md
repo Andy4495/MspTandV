@@ -1,5 +1,8 @@
 # MspTandV Library
 
+[//]: # ( The formulas in this writeup are rendered with GitHub's support of LaTeX formatted math expressions. See reference [4]. Since these expressions can be difficult to read as plain text, there is a Markdown comment with a more readable plaintext version before the LaTeX formatted expression.  )
+
+
 [![Arduino Compile Sketches](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml)
 [![Check Markdown Links](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml)
 
@@ -63,12 +66,11 @@ In general, the library makes use of the following key formulas. The internal im
 
 ### Temperature
 
-```cpp
-TempC = (ADCraw - CAL_ADC_15T30) *
-        ((85 - 30) / (CAL_ADC_15T85 - CAL_ADC15T30)) + 30
-```
+[//]: # ( TempC = [ADCraw - CAL_ADC_15T30] * [[85 - 30] / [CAL_ADC_15T85 - CAL_ADC15T30]] + 30 )
 
-- The above equation assumes a linear voltage response to temperature changes and uses two factory-programmed calibration readings to determine the ADC to temperature relationship.
+$$ TempC = (ADC_{raw} - CAL\textunderscore ADC\textunderscore 15T30) \times \left({85 - 30 \over CAL\textunderscore ADC\textunderscore 15T85 - CAL\textunderscore ADC\textunderscore 15T30}\right) + 30 $$
+
+The above equation assumes a linear voltage response to temperature changes and uses two factory-programmed calibration readings to determine the ADC to temperature relationship.
 
 In my experience, I have found that using a calibrated measurement for temperature is absolutely necessary, as the uncalibrated and calibrated temperature readings can vary significantly (10s of degrees Fahrenheit).
 
@@ -76,10 +78,9 @@ In my experience, I have found that using a calibrated measurement for temperatu
 
 First, calibrate the ADC reading:
 
-```cpp
-ADC_Calibrated = (ADCraw * CAL_ADC_REF_FACTOR / 2^15) *
-                 (CAL_ADC_GAIN_FACTOR / 2 ^ 15) + CAL_ADC_OFFSET
-```
+[//]: # ( ADC_Calibrated = [ADCraw * CAL_ADC_REF_FACTOR / 2^15] * [CAL_ADC_GAIN_FACTOR / 2 ^ 15] + CAL_ADC_OFFSET )
+
+$$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\textunderscore ADC\textunderscore REF\textunderscore FACTOR \over 2^{15} \right) \times \left(CAL\textunderscore ADC\textunderscore GAIN\textunderscore FACTOR \over 2^{15} \right) + CAL\textunderscore ADC\textunderscore OFFSET $$
 
 For ADC types that have a "Vcc/2" input channel:
 
@@ -143,6 +144,7 @@ The software and other files in this repository are released under what is commo
 [1]: http://www.ti.com/lit/ds/symlink/msp430g2553.pdf
 [2]: http://www.ti.com/lit/ds/symlink/msp430g2112.pdf
 [3]: http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf
+[4]: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions
 [100]: https://choosealicense.com/licenses/mit/
 [101]: ./LICENSE.txt
 [200]: https://github.com/Andy4495/MspTandV
