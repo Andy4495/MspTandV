@@ -62,27 +62,51 @@ The following equation assumes a linear voltage response to temperature changes 
 
 [//]: # ( TempC = [ADCraw - CAL_ADC_15T30] * [[85 - 30] / [CAL_ADC_15T85 - CAL_ADC15T30]] + 30 )
 
-$$ TempC = (ADC_{raw} - CAL\textunderscore ADC\textunderscore 15T30) \times \left({85 - 30 \over CAL\textunderscore ADC\textunderscore 15T85 - CAL\textunderscore ADC\textunderscore 15T30}\right) + 30 $$
+$$ TempC = (ADC_{raw} - CAL\textunderscore ADC\textunderscore \textit{15}T\textit{30}) \times \left({85 - 30 \over CAL\textunderscore ADC\textunderscore \textit{15}T\textit{85} - CAL\textunderscore ADC\textunderscore \textit{15}T\textit{30}}\right) + 30 $$
+
+#### Impact of Using Calibrated Temperature
 
 In my experience, I have found that using a calibrated measurement for temperature is absolutely necessary, as the uncalibrated and calibrated temperature readings can vary significantly (10s of degrees Fahrenheit).
 
 ### Voltage
 
-First, set the ADC input channel. If the ADC has "Vcc/2" input channel, use that. Otherwise, use the internal voltage reference for the input channel. Take the ADC reading, which is referred to as $ ADC_{raw} $ below. 
+The voltage measurement and calculation differs depending on whether the ADC has a `Vcc/2` input channel.
 
-Next, calibrate the ADC reading:
+#### ADC With `Vcc/2` Input Channel
+
+*This applies to the G2, F5529, FR6989, and FR5969 processor types.*
+
+First, set the ADC reference to the chip's internal voltage reference.
+
+Next, take the raw ADC reading ( $ ADC_{raw} $ ) on the `Vcc/2` input channel.
+
+Then, calculate a calibrated value, $ ADC_{Calibrated} $ , from the raw ADC reading, $ ADC_{raw} $ :
 
 [//]: # ( ADC_Calibrated = [ADCraw * CAL_ADC_REF_FACTOR / 2^15] * [CAL_ADC_GAIN_FACTOR / 2 ^ 15] + CAL_ADC_OFFSET )
 
 $$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\textunderscore ADC\textunderscore REF\textunderscore FACTOR \over 2^{15} \right) \times \left(CAL\textunderscore ADC\textunderscore GAIN\textunderscore FACTOR \over 2^{15} \right) + CAL\textunderscore ADC\textunderscore OFFSET $$
 
-$ V_{cc} $ for ADC types that have a "Vcc/2" input channel is calculated with: 
+Finally, calculate $ V_{cc} $:
 
 [//]: # ( Vcc/2 = ADC_Calibrated * Vref / ADC_STEPS )
 
 $$ V_{cc} = {ADC_{Calibrated} \over ADC\textunderscore STEPS} \times V_{ref} \times 2 $$
 
-For ADC types that do not have a Vcc/2 input channel, $ V_{cc} $ is calculated using the known voltage from the internal reference, $ V_{ref} $:
+#### ADC Without `Vcc/2` Input Channel
+
+*This applies to the FR4133 and FR2433 processor types.*
+
+First, set the ADC reference to `Vcc`.
+
+Next, take the raw ADC reading ( $ ADC_{raw} $ ) on the internal voltage reference ( $ V_{ref} $ ) input channel.
+
+Then, calculate a calibrated value, $ ADC_{Calibrated} $ , from the raw ADC reading, $ ADC_{raw} $ :
+
+[//]: # ( ADC_Calibrated = [ADCraw * CAL_ADC_REF_FACTOR / 2^15] * [CAL_ADC_GAIN_FACTOR / 2 ^ 15] + CAL_ADC_OFFSET )
+
+$$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\textunderscore ADC\textunderscore REF\textunderscore FACTOR \over 2^{15} \right) \times \left(CAL\textunderscore ADC\textunderscore GAIN\textunderscore FACTOR \over 2^{15} \right) + CAL\textunderscore ADC\textunderscore OFFSET $$
+
+Finally, $ V_{cc} $ is calculated using the known voltage from the internal reference, $ V_{ref} $:
 
 [//]: # ( Vref = ADC_Calibrated * Vcc / ADC_STEPS )
 
@@ -94,7 +118,9 @@ And solving for $ V_{cc} $ since $ V_{ref} $ is a known value:
 
 $$ V_{cc} = {ADC\textunderscore STEPS \over ADC_{Calibrated}} \times V_{ref} $$
 
-Based on my experience using a relatively small sample size of MSP430 chips, I have found that calibrating the Vcc reading had an impact of a few 10s of mV. However, I would still recommend using calibrated Vcc measurements over uncalibrated values.
+#### Impact of Using Calibrated Voltage
+
+Based on my experience using a relatively small sample size of MSP430 chips, I have found that calibrating the Vcc reading had an impact of a few 10s of mV.
 
 ## Note on FR4133 Usage
 
