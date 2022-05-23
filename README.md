@@ -1,6 +1,6 @@
 # MspTandV Library
 
-[//]: # ( The formulas in this writeup are rendered with GitHub's support of LaTeX formatted math expressions. See references [10 and [11]. Since these expressions can be difficult to read as plain text, there is a Markdown comment with a plaintext readable version before the LaTeX formatted expression.  )
+[//]: # ( The formulas in this writeup are rendered with GitHub's support of LaTeX formatted math expressions. See references [10] and [11]. Since these expressions can be difficult to read as plain text, there is a Markdown comment with a plaintext readable version before the LaTeX formatted expression.  )
 
 [![Arduino Compile Sketches](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml)
 [![Check Markdown Links](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml)
@@ -68,29 +68,31 @@ In my experience, I have found that using a calibrated measurement for temperatu
 
 ### Voltage
 
-First, calibrate the ADC reading:
+First, set the ADC input channel. If the ADC has "Vcc/2" input channel, use that. Otherwise, use the internal voltage reference for the input channel. Take the ADC reading, which is referred to as $ ADC_{raw} $ below. 
+
+Next, calibrate the ADC reading:
 
 [//]: # ( ADC_Calibrated = [ADCraw * CAL_ADC_REF_FACTOR / 2^15] * [CAL_ADC_GAIN_FACTOR / 2 ^ 15] + CAL_ADC_OFFSET )
 
 $$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\textunderscore ADC\textunderscore REF\textunderscore FACTOR \over 2^{15} \right) \times \left(CAL\textunderscore ADC\textunderscore GAIN\textunderscore FACTOR \over 2^{15} \right) + CAL\textunderscore ADC\textunderscore OFFSET $$
 
-For ADC types that have a "Vcc/2" input channel:
+$ V_{cc} $ for ADC types that have a "Vcc/2" input channel is calculated with: 
 
 [//]: # ( Vcc/2 = ADC_Calibrated * Vref / ADC_STEPS )
 
-$$ {V_{cc} \over 2} = {ADC\textunderscore Calibrated \over ADC\textunderscore STEPS} \times V_{ref} $$
+$$ V_{cc} = {ADC_{Calibrated} \over ADC\textunderscore STEPS} \times V_{ref} \times 2 $$
 
-Some ADC types do not have a Vcc/2 input channel, but instead have an input channel for the internal voltage reference. In this case, get the ADC reading for the known voltage reference level, and correlate that to Vcc:
+For ADC types that do not have a Vcc/2 input channel, $ V_{cc} $ is calculated using the known voltage from the internal reference, $ V_{ref} $:
 
 [//]: # ( Vref = ADC_Calibrated * Vcc / ADC_STEPS )
 
-$$ V_{ref} = {ADC\textunderscore Calibrated \over ADC\textunderscore STEPS} \times V_{cc} $$
+$$ V_{ref} = {ADC_{Calibrated} \over ADC\textunderscore STEPS} \times V_{cc} $$
 
-Solving for Vcc where Vref is a known value:
+And solving for $ V_{cc} $ since $ V_{ref} $ is a known value:
 
 [//]: # ( Vcc = Vref * ADC_STEPS / ADC_Calibrated )
 
-$$ V_{cc} = {ADC\textunderscore STEPS \over ADC\textunderscore Calibrated} \times V_{ref} $$
+$$ V_{cc} = {ADC\textunderscore STEPS \over ADC_{Calibrated}} \times V_{ref} $$
 
 Based on my experience using a relatively small sample size of MSP430 chips, I have found that calibrating the Vcc reading had an impact of a few 10s of mV. However, I would still recommend using calibrated Vcc measurements over uncalibrated values.
 
