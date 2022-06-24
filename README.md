@@ -66,7 +66,7 @@ $$ TempC = (ADC_{raw} - CAL\textunderscore ADC\textunderscore \textit{15}T\texti
 
 #### Impact of Using Calibrated Temperature
 
-In my experience, I have found that using a calibrated measurement for temperature is absolutely necessary, as the uncalibrated and calibrated temperature readings can vary significantly (10s of degrees Fahrenheit).
+In my experience, I have found that using a calibrated measurement for temperature is absolutely necessary, as the uncalibrated and calibrated temperature readings can vary significantly (tens of degrees Fahrenheit).
 
 ### Voltage
 
@@ -78,15 +78,15 @@ The voltage measurement and calculation differs depending on whether the ADC has
 
 First, set the ADC reference to the chip's internal voltage reference.
 
-Next, take the raw ADC reading ( $ ADC_{raw} $ ) on the `Vcc/2` input channel.
+Next, take the raw ADC reading ( $ADC_{raw}$ ) on the `Vcc/2` input channel.
 
-Then, calculate a calibrated value, $ ADC_{Calibrated} $ , from the raw ADC reading, $ ADC_{raw} $ :
+Then, calculate a calibrated value, $ADC_{Calibrated}$ , from the raw ADC reading, $ADC_{raw}$ :
 
 [//]: # ( ADC_Calibrated = [ADCraw * CAL_ADC_REF_FACTOR / 2^15] * [CAL_ADC_GAIN_FACTOR / 2 ^ 15] + CAL_ADC_OFFSET )
 
 $$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\textunderscore ADC\textunderscore REF\textunderscore FACTOR \over 2^{15} \right) \times \left(CAL\textunderscore ADC\textunderscore GAIN\textunderscore FACTOR \over 2^{15} \right) + CAL\textunderscore ADC\textunderscore OFFSET $$
 
-Finally, calculate $ V_{cc} $:
+Finally, calculate $V_{cc}$:
 
 [//]: # ( Vcc/2 = ADC_Calibrated * Vref / ADC_STEPS )
 
@@ -98,21 +98,21 @@ $$ V_{cc} = {ADC_{Calibrated} \over ADC\textunderscore STEPS} \times V_{ref} \ti
 
 First, set the ADC reference to `Vcc`.
 
-Next, take the raw ADC reading ( $ ADC_{raw} $ ) on the internal voltage reference ( $ V_{ref} $ ) input channel.
+Next, take the raw ADC reading ( $ADC_{raw}$ ) on the internal voltage reference ( $V_{ref}$ ) input channel.
 
-Then, calculate a calibrated value, $ ADC_{Calibrated} $ , from the raw ADC reading, $ ADC_{raw} $ :
+Then, calculate a calibrated value, $ADC_{Calibrated}$ , from the raw ADC reading, $ADC_{raw}$ :
 
 [//]: # ( ADC_Calibrated = [ADCraw * CAL_ADC_REF_FACTOR / 2^15] * [CAL_ADC_GAIN_FACTOR / 2 ^ 15] + CAL_ADC_OFFSET )
 
 $$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\textunderscore ADC\textunderscore REF\textunderscore FACTOR \over 2^{15} \right) \times \left(CAL\textunderscore ADC\textunderscore GAIN\textunderscore FACTOR \over 2^{15} \right) + CAL\textunderscore ADC\textunderscore OFFSET $$
 
-Finally, $ V_{cc} $ is calculated using the known voltage from the internal reference, $ V_{ref} $:
+Finally, $V_{cc}$ is calculated using the known voltage from the internal reference, $V_{ref}$:
 
 [//]: # ( Vref = ADC_Calibrated * Vcc / ADC_STEPS )
 
 $$ V_{ref} = {ADC_{Calibrated} \over ADC\textunderscore STEPS} \times V_{cc} $$
 
-And solving for $ V_{cc} $ since $ V_{ref} $ is a known value:
+And solving for $V_{cc}$ since $V_{ref}$ is a known value:
 
 [//]: # ( Vcc = Vref * ADC_STEPS / ADC_Calibrated )
 
