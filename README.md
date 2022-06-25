@@ -120,7 +120,7 @@ $$ V_{cc} = {ADC\textunderscore STEPS \over ADC_{Calibrated}} \times V_{ref} $$
 
 #### Impact of Using Calibrated Voltage
 
-Based on my experience using a relatively small sample size of MSP430 chips, I have found that calibrating the Vcc reading had an impact of a few 10s of mV.
+Based on my experience using a relatively small sample size of MSP430 chips, I have found that calibrating the Vcc reading had an impact of a few tens of mV.
 
 ## Note on FR4133 Usage
 
@@ -130,7 +130,7 @@ The value of TCsensor given in the [FR4133 datasheet][3] appears to be off by a 
 
 ## Note on G2553/G2452 Low Voltage Operation
 
-The G2553 and G2452 device types can only run at a 16 Mhz system clock frequency when powered at 3.3 V. See Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets. When operating with supply voltages lower than 3.3 V (e.g. in a battery-operated setup), you will need to configure a lower system clock frequency. The devices can be run at a supply voltage as low as 2.2 V when running at 8 MHz. By default, Energia sets the G2553 and G2452 system clock frequency at 16 Mhz. To run the device at 8 MHz, the `boards.txt` file needs to be edited to add an 8 MHz entry. See [this discussion](https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/) for tips on editing `boards.txt` to change the system frequency.
+Per Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets, the G2553 and G2452 device types can only run at the full 16 Mhz when powered with a supply voltage of 3.3 V. When operating at lower supply voltages (e.g. in a battery-operated setup), you will need to configure a lower system clock frequency. The devices can be run at a supply voltage as low as 2.2 V when running at 8 MHz. By default, the MSP board package sets the G2553 and G2452 system clock frequency at 16 Mhz. To run the device at 8 MHz, the `boards.txt` file needs to be edited to add an 8 MHz entry. See [this discussion][7] for tips on editing `boards.txt` to change the system frequency.
 
 Also, the internal 2.5V reference on the G2 devices needs a Vcc of at least 2.9V for proper operation. To allow proper Vcc readings in a low-voltage (e.g. battery-operated) environment, the library takes a voltage reading from the lower voltage reference first. It only takes a reading from the higher voltage reference if Vcc is high enough for proper operation of the higher voltage reference. This applies to all devices that use the "Vcc/2" ADC input  channel.
 
@@ -156,6 +156,7 @@ The software and other files in this repository are released under what is commo
 [1]: http://www.ti.com/lit/ds/symlink/msp430g2553.pdf
 [2]: http://www.ti.com/lit/ds/symlink/msp430g2112.pdf
 [3]: http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf
+[7]: https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/
 [10]: https://github.blog/2022-05-19-math-support-in-markdown/
 [11]: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions
 [100]: https://choosealicense.com/licenses/mit/
