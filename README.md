@@ -130,13 +130,24 @@ The value of TCsensor given in the [FR4133 datasheet][3] appears to be off by a 
 
 ## Note on G2553/G2452 Low Voltage Operation
 
-Per Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets, the G2553 and G2452 device types can only run at the full 16 Mhz when powered with a supply voltage of 3.3 V. When operating at lower supply voltages (e.g. in a battery-operated setup), you will need to configure a lower system clock frequency. The devices can be run at a supply voltage as low as 2.2 V when running at 8 MHz. By default, the MSP board package sets the G2553 and G2452 system clock frequency at 16 Mhz. To run the device at 8 MHz, the `boards.txt` file needs to be edited to add an 8 MHz entry. See [this discussion][7] for tips on editing `boards.txt` to change the system frequency.
+### Processor Clock Frequency
 
-Also, the internal 2.5V reference on the G2 devices needs a Vcc of at least 2.9V for proper operation. To allow proper Vcc readings in a low-voltage (e.g. battery-operated) environment, the library takes a voltage reading from the lower voltage reference first. It only takes a reading from the higher voltage reference if Vcc is high enough for proper operation of the higher voltage reference. This applies to all devices that use the "Vcc/2" ADC input  channel.
+Per Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets, the G2553 and G2452 device types can only run at the full 16 Mhz when powered with a supply voltage of 3.3 V. When operating at lower supply voltages (e.g. in a battery-operated setup), you will need to configure a lower system clock frequency. The devices can be run at a supply voltage as low as 2.2 V when running at 8 MHz.
+
+By default, the MPS430 boards package sets the G2553 and G2452 system frequency at 16 Mhz. To run the device at 8 MHz, the `boards.txt` file needs to be edited to add an 8 MHz entry. This repo contains an edited [`boards.txt`](./extras/boards.txt) file which is based on the MSP 1.0.7 board package. An 8 MHz entry for the G2553 processor has been added, along with editing the original G2553 entry to clarify that it is 16 MHz.
+
+The boards.txt file used by Energia is located at `~/Library/Energia15/packages/energia/hardware/msp430/1.0.7` on MacOS, and a similar path on Windows and Linux.
+
+The boards.txt file used by Arduino or Visual Studio Code is located at `~/Library/Arduino15/packages/energia/hardware/msp430/1.0.5` on MacOS, and a similar path on Windows and Linux. Note that the specific package version (1.0.5 in this case) may be different depending on what you have installed.
+
+### Internal Voltage Reference
+
+The internal 2.5 V reference on the G2 devices needs a Vcc of at least 2.9V for proper operation. To allow proper Vcc readings in a low-voltage (e.g. battery-operated) environment, the library takes a voltage reading from the lower voltage reference first. It only takes a reading from the higher voltage reference if Vcc is high enough for proper operation of the higher voltage reference. This applies to all devices that use the "Vcc/2" ADC input  channel.
 
 ## References
 
 - Texas Instruments E2E Forum thread regarding [ADC calibration](https://e2e.ti.com/support/microcontrollers/msp430/f/166/t/204428)
+- [Discussion][7] on editing `boards.txt` to change the system frequency.
 - MSP430G2553 and MSP430G2452 [Family User's Guide](http://www.ti.com/lit/ug/slau144j/slau144j.pdf).
 - MSP430G2553 [Device Datasheet][1].
 - MSP430G2452 [Device Datasheet][2].
