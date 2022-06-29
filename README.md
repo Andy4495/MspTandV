@@ -136,9 +136,9 @@ Per Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets, the
 
 By default, the MPS430 boards package sets the G2553 and G2452 system frequency at 16 Mhz. To run the device at 8 MHz, the `boards.txt` file needs to be edited to add an 8 MHz entry. This repo contains an edited [`boards.txt`](./extras/boards.txt) file which is based on the MSP 1.0.7 board package. An 8 MHz entry for the G2553 processor has been added, along with editing the original G2553 entry to clarify that it is 16 MHz.
 
-The boards.txt file used by Energia is located at `~/Library/Energia15/packages/energia/hardware/msp430/1.0.7` on MacOS, and a similar path on Windows and Linux.
+The `boards.txt` file used by Energia is located at `~/Library/Energia15/packages/energia/hardware/msp430/1.0.7` on MacOS, and a similar path on Windows and Linux.
 
-The boards.txt file used by Arduino or Visual Studio Code is located at `~/Library/Arduino15/packages/energia/hardware/msp430/1.0.5` on MacOS, and a similar path on Windows and Linux. Note that the specific package version (1.0.5 in this case) may be different depending on what you have installed.
+The `boards.txt` file used by Arduino or Visual Studio Code is located at `~/Library/Arduino15/packages/energia/hardware/msp430/1.0.5` on MacOS, and a similar path on Windows and Linux. Note that the specific package version (1.0.5 in this case) may be different depending on what you have installed.
 
 ### Internal Voltage Reference
 
