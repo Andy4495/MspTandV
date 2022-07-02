@@ -5,15 +5,15 @@
 [![Arduino Compile Sketches](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml)
 [![Check Markdown Links](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml)
 
-This library provides simple, easy-to-use functions to return the calibrated internal temperature and Vcc level on supported MSP430 processor types.
+This library provides simple, easy-to-use functions to return the calibrated internal temperature and `Vcc` level on supported MSP430 processor types.
 
 This library makes use of the factory-programmed calibration settings unique to each chip, and runs all of its calculations using integer math.
 
-Getting accurate Vcc readings is particularly useful when powering a project with batteries, so that you can get an indication of the current battery level and know when it is time to change batteries.
+Getting accurate `Vcc` readings is particularly useful when powering a project with batteries, so that you can get an indication of the current battery level and know when it is time to change batteries.
 
 Supported MSP430 processor types: F5529, FR4133, FR6989, FR2433, FR5969, G2553, G2452.
 
-**See [Note](#note-on-g2553g2452-low-voltage-operation) below for considerations with G2553/G2452 low voltage operation.**
+**See [Note](#clock-frequency-and-low-voltage-operation) below regarding clock frequencies when running the  G2553/G2452 in low voltage configurations.**
 
 ## Usage
 
@@ -122,7 +122,21 @@ $$ V_{cc} = {ADC\textunderscore STEPS \over ADC_{Calibrated}} \times V_{ref} $$
 
 Based on my experience using a relatively small sample size of MSP430 chips, I have found that calibrating the Vcc reading had an impact of a few tens of mV.
 
-## Note on FR4133 Usage
+## Supply Voltage Versus Clock Frequency
+
+The various supported MSP430 processors have different minimum supply voltage requirements to run at the default system frequency. This becomes important in a battery-operated environment where `Vcc` may drop significantly below 3.3 V.
+
+| Processor Type | Default Freq | Min `Vcc` | Notes                     |
+| -------------- | ------------ | --------- | ------------------------- |
+| F5529          | 25 MHz       | 2.4 V     | 8 MHz at `Vcc` &ge; 1.8 V |
+| FR4133         | 16 MHz       | 1.8 V     |                           |
+| FR6989         | 16 MHz       | 1.8 V     |                           |
+| FR2433         | 16 MHz       | 1.8 V     |                           |
+| FR5969         | 16 MHz       | 1.8 V     |                           |
+| G2553          | 16 MHz       | 3.3 V     | 8 MHz at `Vcc` &ge; 2.1 V |
+| G2452          | 16 MHz       | 3.3 V     | 8 MHz at `Vcc` &ge; 2.1 V |
+
+## Note on FR4133 Processors
 
 In my sample of four FR4133 processors (Rev B), none of them had the "1.5 V Reference Factor" calibration value programmed in the TLV structure. If the library detects an unprogrammed Reference Factor value on an FR4133 device, it uses a calibration factor of "1", which has the effect of ignoring the reference voltage portion of the Vcc calibration.
 
@@ -132,7 +146,7 @@ The value of TCsensor given in the [FR4133 datasheet][3] appears to be off by a 
 
 ### Clock Frequency and Low Voltage Operation
 
-Per Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets, the G2553 and G2452 device types can only run at the full 16 Mhz when powered with a supply voltage of 3.3 V. When operating at lower supply voltages (e.g. in a battery-operated setup), you will need to configure a lower system clock frequency. The devices can be run at a supply voltage as low as 2.2 V when running at 8 MHz.
+Per Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets, the G2553 and G2452 device types can only run at the default 16 Mhz system frequency when powered with a supply voltage of at least 3.3 V. When operating at lower supply voltages (e.g. in a battery-operated setup), you will need to configure a lower system clock frequency. The devices can be run at a supply voltage as low as 2.1 V when running at 8 MHz.
 
 By default, the MPS430 boards package sets the G2553 and G2452 system frequency at 16 Mhz. To run the device at 8 MHz, the `boards.txt` file needs to be edited to add an 8 MHz entry. This repo contains an edited [`boards.txt`](./extras/boards.txt) file which is based on the MSP 1.0.7 board package. An 8 MHz entry for the G2553 processor has been added, along with editing the original G2553 entry to clarify that it is 16 MHz.
 
@@ -142,7 +156,7 @@ The `boards.txt` file used by Arduino or Visual Studio Code is located at `~/Lib
 
 ### Internal Voltage Reference
 
-The internal 2.5 V reference on the G2 devices needs a Vcc of at least 2.9V for proper operation. To allow proper Vcc readings in a low-voltage (e.g. battery-operated) environment, the library takes a voltage reading from the lower voltage reference first. It only takes a reading from the higher voltage reference if Vcc is high enough for proper operation of the higher voltage reference.
+The internal 2.5 V reference on the G2 devices needs a `Vcc` of at least 2.9V for proper operation. To allow proper `Vcc` readings in a low-voltage (e.g. battery-operated) environment, the library takes a voltage reading from the lower voltage reference first. It only takes a reading from the higher voltage reference if `Vcc` is high enough for proper operation of the higher voltage reference.
 
 ## References
 
