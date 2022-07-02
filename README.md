@@ -76,11 +76,11 @@ The voltage measurement and calculation differs depending on whether the ADC has
 
 *This applies to the G2, F5529, FR6989, and FR5969 processor types.*
 
-First, set the ADC reference to the chip's internal voltage reference.
+First, set the ADC reference to the chip's lower internal voltage reference (start with the lower reference because `Vcc` might not be high enough to be in spec to support the higher reference).
 
-Next, take the raw ADC reading ( $ADC_{raw}$ ) on the `Vcc/2` input channel.
+Next, take the raw ADC reading ( $ADC_{raw}$ ) on the `Vcc/2` input channel. If the measured voltage is less than the crossover voltage, then continue with calculating the calibrated value. Otherwise, set the ADC reference to the higher internal voltage reference and re-take the ADC reading and then continue with calculating the calibrated value.
 
-Then, calculate a calibrated value, $ADC_{Calibrated}$ , from the raw ADC reading, $ADC_{raw}$ :
+To calculate a calibrated value, $ADC_{Calibrated}$ , from the raw ADC reading, $ADC_{raw}$ , use the following formula:
 
 [//]: # ( ADC_Calibrated = [ADCraw * CAL_ADC_REF_FACTOR / 2^15] * [CAL_ADC_GAIN_FACTOR / 2 ^ 15] + CAL_ADC_OFFSET )
 
@@ -128,9 +128,9 @@ In my sample of four FR4133 processors (Rev B), none of them had the "1.5 V Refe
 
 The value of TCsensor given in the [FR4133 datasheet][3] appears to be off by a factor of 10. The value used by the library is adjusted to account for this. This only affects the uncalibrated temperature reading.
 
-## Note on G2553/G2452 Low Voltage Operation
+## Note on G2553/G2452 Processors
 
-### Processor Clock Frequency
+### Clock Frequency and Low Voltage Operation
 
 Per Figure 1 in the [MSP430G2553][1] and [MSP430G2452][2] Device Datasheets, the G2553 and G2452 device types can only run at the full 16 Mhz when powered with a supply voltage of 3.3 V. When operating at lower supply voltages (e.g. in a battery-operated setup), you will need to configure a lower system clock frequency. The devices can be run at a supply voltage as low as 2.2 V when running at 8 MHz.
 
@@ -142,7 +142,7 @@ The `boards.txt` file used by Arduino or Visual Studio Code is located at `~/Lib
 
 ### Internal Voltage Reference
 
-The internal 2.5 V reference on the G2 devices needs a Vcc of at least 2.9V for proper operation. To allow proper Vcc readings in a low-voltage (e.g. battery-operated) environment, the library takes a voltage reading from the lower voltage reference first. It only takes a reading from the higher voltage reference if Vcc is high enough for proper operation of the higher voltage reference. This applies to all devices that use the "Vcc/2" ADC input  channel.
+The internal 2.5 V reference on the G2 devices needs a Vcc of at least 2.9V for proper operation. To allow proper Vcc readings in a low-voltage (e.g. battery-operated) environment, the library takes a voltage reading from the lower voltage reference first. It only takes a reading from the higher voltage reference if Vcc is high enough for proper operation of the higher voltage reference.
 
 ## References
 
