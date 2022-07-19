@@ -126,15 +126,15 @@ Based on my experience using a relatively small sample size of MSP430 chips, I h
 
 The various supported MSP430 processors have different minimum supply voltage requirements to run at the default system frequency. This becomes important in a battery-operated environment where `Vcc` may drop significantly below 3.3 V.
 
-| Processor Type | Default Freq | Min `Vcc` | Notes                     |
-| -------------- | ------------ | --------- | ------------------------- |
-| F5529          | 25 MHz       | 2.4 V     | 8 MHz at `Vcc` &ge; 1.8 V |
-| FR4133         | 16 MHz       | 1.8 V     |                           |
-| FR6989         | 16 MHz       | 1.8 V     |                           |
-| FR2433         | 16 MHz       | 1.8 V     |                           |
-| FR5969         | 16 MHz       | 1.8 V     |                           |
-| G2553          | 16 MHz       | 3.3 V     | 8 MHz at `Vcc` &ge; 2.1 V |
-| G2452          | 16 MHz       | 3.3 V     | 8 MHz at `Vcc` &ge; 2.1 V |
+| Processor Type | Default Freq | Min `Vcc` at Default | Lower `Vcc` Frequency Limit |
+| -------------- | :----------: | :------------------: | --------------------------- |
+| F5529          | 25 MHz       | 2.4 V                | 8 MHz at `Vcc` &ge; 1.8 V   |
+| FR4133         | 16 MHz       | 1.8 V                |                             |
+| FR6989         | 16 MHz       | 1.8 V                |                             |
+| FR2433         | 16 MHz       | 1.8 V                |                             |
+| FR5969         | 16 MHz       | 1.8 V                |                             |
+| G2553          | 16 MHz       | 3.3 V                | 8 MHz at `Vcc` &ge; 2.1 V   |
+| G2452          | 16 MHz       | 3.3 V                | 8 MHz at `Vcc` &ge; 2.1 V   |
 
 ## Note on FR4133 Processors
 
