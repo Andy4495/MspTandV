@@ -62,7 +62,7 @@ The following equation assumes a linear voltage response to temperature changes 
 
 [//]: # ( TempC = [ADCraw - CAL_ADC_15T30] * [[85 - 30] / [CAL_ADC_15T85 - CAL_ADC15T30]] + 30 )
 
-$$ TempC = (ADC_{raw} - CAL\textunderscore ADC\textunderscore \textit{15}T\textit{30}) \times \left({85 - 30 \over CAL\textunderscore ADC\textunderscore \textit{15}T\textit{85} - CAL\textunderscore ADC\textunderscore \textit{15}T\textit{30}}\right) + 30 $$
+$$ TempC = ( ADC_{raw} - {CAL\\\_ ADC\\\_\textit{15}T\textit{30}} ) \times \left({85 - 30 \over CAL\\\_ADC\\\_\textit{15}T\textit{85} - CAL\\\_ADC\\\_\textit{15}T\textit{30}}\right) + 30 $$
 
 #### Impact of Using Calibrated Temperature
 
@@ -84,13 +84,13 @@ To calculate a calibrated value, $ADC_{Calibrated}$ , from the raw ADC reading, 
 
 [//]: # ( ADC_Calibrated = [ADCraw * CAL_ADC_REF_FACTOR / 2^15] * [CAL_ADC_GAIN_FACTOR / 2 ^ 15] + CAL_ADC_OFFSET )
 
-$$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\textunderscore ADC\textunderscore REF\textunderscore FACTOR \over 2^{15} \right) \times \left(CAL\textunderscore ADC\textunderscore GAIN\textunderscore FACTOR \over 2^{15} \right) + CAL\textunderscore ADC\textunderscore OFFSET $$
+$$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\\\_ADC\\\_REF\\\_FACTOR \over 2^{15} \right) \times \left(CAL\\\_ADC\\\_GAIN\\\_FACTOR \over 2^{15} \right) + {CAL\\\_ADC\\\_OFFSET} $$
 
 Finally, calculate $V_{cc}$:
 
 [//]: # ( Vcc/2 = ADC_Calibrated * Vref / ADC_STEPS )
 
-$$ V_{cc} = {ADC_{Calibrated} \over ADC\textunderscore STEPS} \times V_{ref} \times 2 $$
+$$ V_{cc} = {ADC_{Calibrated} \over ADC\\\_STEPS} \times V_{ref} \times 2 $$
 
 #### ADC Without `Vcc/2` Input Channel
 
@@ -104,19 +104,19 @@ Then, calculate a calibrated value, $ADC_{Calibrated}$ , from the raw ADC readin
 
 [//]: # ( ADC_Calibrated = [ADCraw * CAL_ADC_REF_FACTOR / 2^15] * [CAL_ADC_GAIN_FACTOR / 2 ^ 15] + CAL_ADC_OFFSET )
 
-$$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\textunderscore ADC\textunderscore REF\textunderscore FACTOR \over 2^{15} \right) \times \left(CAL\textunderscore ADC\textunderscore GAIN\textunderscore FACTOR \over 2^{15} \right) + CAL\textunderscore ADC\textunderscore OFFSET $$
+$$ ADC_{Calibrated} = \left(ADC_{raw} \times CAL\\\_ADC\\\_REF\\\_FACTOR \over 2^{15} \right) \times \left(CAL\\\_ADC\\\_GAIN\\\_FACTOR \over 2^{15} \right) + {CAL\\\_ADC\\\_OFFSET} $$
 
 Finally, $V_{cc}$ is calculated using the known voltage from the internal reference, $V_{ref}$:
 
 [//]: # ( Vref = ADC_Calibrated * Vcc / ADC_STEPS )
 
-$$ V_{ref} = {ADC_{Calibrated} \over ADC\textunderscore STEPS} \times V_{cc} $$
+$$ V_{ref} = {ADC_{Calibrated} \over ADC\\\_STEPS} \times V_{cc} $$
 
 And solving for $V_{cc}$ since $V_{ref}$ is a known value:
 
 [//]: # ( Vcc = Vref * ADC_STEPS / ADC_Calibrated )
 
-$$ V_{cc} = {ADC\textunderscore STEPS \over ADC_{Calibrated}} \times V_{ref} $$
+$$ V_{cc} = {ADC\\\_STEPS \over ADC_{Calibrated}} \times V_{ref} $$
 
 #### Impact of Using Calibrated Voltage
 
