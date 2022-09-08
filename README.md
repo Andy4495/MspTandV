@@ -182,8 +182,8 @@ The software and other files in this repository are released under what is commo
 [2]: http://www.ti.com/lit/ds/symlink/msp430g2112.pdf
 [3]: http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf
 [7]: https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/
-[10]: https://github.blog/2022-05-19-math-support-in-markdown/
-[11]: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions
+[//]: # ([10]: https://github.blog/2022-05-19-math-support-in-markdown/)
+[//]: # ([11]: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions)
 [100]: https://choosealicense.com/licenses/mit/
 [101]: ./LICENSE.txt
-[200]: https://github.com/Andy4495/MspTandV
+[//]: # ([200]: https://github.com/Andy4495/MspTandV)
