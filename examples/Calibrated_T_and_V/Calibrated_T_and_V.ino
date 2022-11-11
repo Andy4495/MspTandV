@@ -36,6 +36,11 @@ void setup() {
 #define BOARD_LED GREEN_LED
 #endif
 
+#if defined(__MSP430G2452__)
+  Serial.println("msp430g2452");
+#define BOARD_LED GREEN_LED
+#endif
+
 #if defined(__MSP430F5529__)
   Serial.println("msp430f5529");
 #define BOARD_LED GREEN_LED
