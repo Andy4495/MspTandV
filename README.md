@@ -161,7 +161,7 @@ The internal 2.5 V reference on the G2 devices needs a `Vcc` of at least 2.9V fo
 ## References
 
 - Texas Instruments E2E Forum thread regarding [ADC calibration](https://e2e.ti.com/support/microcontrollers/msp430/f/166/t/204428)
-- [Discussion][7] on editing `boards.txt` to change the system frequency.
+- [43oh discussion][7] ([archived version][8]) on editing `boards.txt` to change the system frequency.
 - MSP430G2553 and MSP430G2452 [Family User's Guide](http://www.ti.com/lit/ug/slau144j/slau144j.pdf).
 - MSP430G2553 [Device Datasheet][1].
 - MSP430G2452 [Device Datasheet][2].
@@ -181,7 +181,9 @@ The software and other files in this repository are released under what is commo
 [1]: http://www.ti.com/lit/ds/symlink/msp430g2553.pdf
 [2]: http://www.ti.com/lit/ds/symlink/msp430g2112.pdf
 [3]: http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf
+<!-- markdown-link-check-disable-next-line -->
 [7]: https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/
+[8]: ./extras/43oh-MSP430g2553-1mhz.pdf
 [//]: # ([10]: https://github.blog/2022-05-19-math-support-in-markdown/)
 [//]: # ([11]: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions)
 [100]: https://choosealicense.com/licenses/mit/
