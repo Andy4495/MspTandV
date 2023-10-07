@@ -7,6 +7,8 @@
 
 This library provides simple, easy-to-use functions to return the calibrated internal temperature and `Vcc` level on supported MSP430 processor types.
 
+In addition to temperature and Vcc readings, see  [below](#calibrated-adc-value) for details on the `MspAdc` class to return calibrated ADC readings when using the chip's internal voltage references.
+
 This library makes use of the factory-programmed calibration settings unique to each chip, and runs all of its calculations using integer math.
 
 Getting accurate `Vcc` readings is particularly useful when powering a project with batteries, so that you can get an indication of the current battery level and know when it is time to change batteries.
@@ -126,7 +128,7 @@ Based on my experience using a relatively small sample size of MSP430 chips, I h
 
 The library also has a class `MspAdc` which calculates a calibrated ADC value when using one of the chip's internal voltage references.
 
-The constructor is called with the pin number to be read by the ADC along with the internal voltage reference number as listed in the table below.
+The constructor, `MspAdc(uint8_t pin, uint8_t ref_num)`, is called with the pin number to be read by the ADC along with the internal voltage reference number as listed in the table below.
 
 | Processor Type   | Internal Reference | Reference Number in Constructor |
 | --------------   | :----------------: | :-----------------------------: |
@@ -149,9 +151,12 @@ MspAdc myAdc(10, 1);
 The public methods are:
 
 ```cpp
-uint16_t getAdcCalibrated();
-uint16_t getAdcRaw();
+void     read();              // ADC read of pin using internal voltage reference ref_num
+uint16_t getAdcCalibrated();  // Returns the calibrated ADC value from previous read()
+uint16_t getAdcRaw();         // Returns the raw ADC value from previous read()
 ```
+
+Note that `getAdcCalibrated()` and `getAdcRaw()` do not initiate an `analogRead()`; they just return the data acquired from the last `read()`. You must call `read()` each time you want a new ADC measurement taken. See the [`Calibrated_ADC.ino` sketch][9] for an example on the usage.
 
 ## Supply Voltage Versus Clock Frequency
 
@@ -215,6 +220,7 @@ The software and other files in this repository are released under what is commo
 <!-- markdown-link-check-disable-next-line -->
 [7]: https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/
 [8]: ./extras/43oh-MSP430g2553-1mhz.pdf
+[9]: ./examples/Calibrated_ADC/Calibrated_ADC.ino
 [//]: # ([10]: https://github.blog/2022-05-19-math-support-in-markdown/)
 [//]: # ([11]: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions)
 [100]: https://choosealicense.com/licenses/mit/
