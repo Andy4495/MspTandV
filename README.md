@@ -124,7 +124,7 @@ $$ V_{cc} = {ADC\\\_STEPS \over ADC_{Calibrated}} \times V_{ref} $$
 
 Based on my experience using a relatively small sample size of MSP430 chips, I have found that calibrating the Vcc reading had an impact of a few tens of mV.
 
-### Calibrated ADC Value
+## Calibrated ADC Value
 
 The library also has a class `MspAdc` which calculates a calibrated ADC value when using one of the chip's internal voltage references.
 
