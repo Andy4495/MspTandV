@@ -122,6 +122,37 @@ $$ V_{cc} = {ADC\\\_STEPS \over ADC_{Calibrated}} \times V_{ref} $$
 
 Based on my experience using a relatively small sample size of MSP430 chips, I have found that calibrating the Vcc reading had an impact of a few tens of mV.
 
+### Calibrated ADC Value
+
+The library also has a class `MspAdc` which calculates a calibrated ADC value when using one of the chip's internal voltage references.
+
+The constructor is called with the pin number to be read by the ADC along with the internal voltage reference number as listed in the table below.
+
+| Processor Type   | Internal Reference | Reference Number in Constructor |
+| --------------   | :----------------: | :-----------------------------: |
+| G2553 or G2452   | 2.5 V              | 1                               |
+|                  | 1.5 V              | 2                               |
+| F5529            | 2.5 V              | 0                               |
+|                  | 2.0 V              | 1                               |
+|                  | 1.5 V              | 2                               |
+| FR4133 or FR2433 | 1.5 V              | 1                               |
+| FR6989 or FR5969 | 2.5 V              | 0                               |
+|                  | 2.0 V              | 1                               |
+|                  | 1.2 V              | 2                               |
+
+For example, if reading pin 10 using the 1.5 V reference on an MSP430FR2433, use the constructor:
+
+```cpp
+MspAdc myAdc(10, 1);
+```
+
+The public methods are:
+
+```cpp
+uint16_t getAdcCalibrated();
+uint16_t getAdcRaw();
+```
+
 ## Supply Voltage Versus Clock Frequency
 
 The various supported MSP430 processors have different minimum supply voltage requirements to run at the default system frequency. This becomes important in a battery-operated environment where `Vcc` may drop significantly below 3.3 V.

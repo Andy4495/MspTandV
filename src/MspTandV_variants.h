@@ -46,7 +46,9 @@ Notes on choice of values:
 #define TEMP_VREF              INTERNAL1V5
 #define TEMP_REF_DV            15       // deciVolts
 #define VCC_TYPE               VCCDIV2  // Measure Vcc/2 wrt internal voltage reference
-#define VCC_CHAN               139       // 128 + 11
+#define VCC_CHAN               139      // 128 + 11
+#define REF1_CHAN              139      // Default to Vcc/2, since INTERNAL1V5 cannot be ADC input
+#define VCC_REF0               DEFAULT
 #define VCC_REF1               INTERNAL2V5
 #define VCC_REF2               INTERNAL1V5
 #define VCC_REF1_DV            25       // deciVolts
@@ -58,6 +60,7 @@ Notes on choice of values:
 #define ADC_STEPS              1023
 #define ADC_CAL_T30            0x10e2   // 0x10da + CAL_ADC_15T30  // 1.5V reference
 #define ADC_CAL_T85            0x10e4   // 0x10da + CAL_ADC_15T85  // 1.5V reference
+#define ADC_CAL_REF0_FACTOR    0        // Not available
 #define ADC_CAL_REF1_FACTOR    0x10e6   // 0x10da + CAL_ADC_25VREF_FACTOR
 #define ADC_CAL_REF2_FACTOR    0x10e0   // 0x10da + CAL_ADC_15VREF_FACTOR
 #define ADC_CAL_GAIN_FACTOR    0x10dc   // 0x10da + CAL_ADC_GAIN_FACTOR
@@ -84,7 +87,9 @@ Notes on choice of values:
 #define TEMP_VREF              INTERNAL1V5
 #define TEMP_REF_DV            15       // deciVolts
 #define VCC_TYPE               VCCDIV2  // Measure Vcc/2 wrt internal voltage reference
-#define VCC_CHAN               139       // 128 + 11
+#define VCC_CHAN               139      // 128 + 11
+#define REF1_CHAN              139      // Default to Vcc/2, since INTERNAL1V5 cannot be ADC input
+#define VCC_REF0               DEFAULT
 #define VCC_REF1               INTERNAL2V5
 #define VCC_REF2               INTERNAL1V5
 #define VCC_REF1_DV            25       // deciVolts
@@ -96,6 +101,7 @@ Notes on choice of values:
 #define ADC_STEPS              1023
 #define ADC_CAL_T30            0x10e2   // 0x10da + CAL_ADC_15T30  // 1.5V reference
 #define ADC_CAL_T85            0x10e4   // 0x10da + CAL_ADC_15T85  // 1.5V reference
+#define ADC_CAL_REF0_FACTOR    0        // Not available
 #define ADC_CAL_REF1_FACTOR    0x10e6   // 0x10da + CAL_ADC_25VREF_FACTOR
 #define ADC_CAL_REF2_FACTOR    0x10e0   // 0x10da + CAL_ADC_15VREF_FACTOR
 #define ADC_CAL_GAIN_FACTOR    0x10dc   // 0x10da + CAL_ADC_GAIN_FACTOR
@@ -105,17 +111,17 @@ Notes on choice of values:
 /* MSP430F5529 - Reference Information
    Device datasheet doc number:           slas590
       ADC electrical characteristics:     5.41
-      Calibration data memory location:   6.11
+      Calibration data memory location:   9.11
       Uncalibrated temp measurement       5.39, note 2
    Family guide doc number:               slau208
       ADC description                     Ch. 28
       Calibrated temp measurement         1.13.5.3
    ADC type:                              ADC12_a
-   Voltage references available:          INTERNAL2V5
-                                          INTERNAL2V0 (not used in this library)
+   Voltage references available:          INTERNAL2V5 (only used by MspAdc)
+                                          INTERNAL2V0
                                           INTERNAL1V5
    Min Vcc for default system freq:       2.4 V
-   Min Vcc for INTERNAL2V5:               2.8 V (not used in this library)
+   Min Vcc for INTERNAL2V5:               2.8 V (only used by MspAdc)
    Min Vcc for INTERNAL2V0:               2.3 V
    Min Vcc for INTERNAL1V5:               2.2 V
 */
@@ -123,7 +129,9 @@ Notes on choice of values:
 #define TEMP_VREF              INTERNAL1V5
 #define TEMP_REF_DV            15        // deciVolts
 #define VCC_TYPE               VCCDIV2   // Measure Vcc/2 wrt internal voltage reference
-#define VCC_CHAN               A11
+#define VCC_CHAN               A11       // This is defined as 139 in pins_energia.h
+#define REF1_CHAN              139       // Default to Vcc/2, since INTERNAL1V5 cannot be ADC input
+#define VCC_REF0               INTERNAL2V5
 #define VCC_REF1               INTERNAL2V0
 #define VCC_REF2               INTERNAL1V5
 #define VCC_REF1_DV            20        // deciVolts
@@ -135,6 +143,7 @@ Notes on choice of values:
 #define ADC_STEPS              4095
 #define ADC_CAL_T30            0x1a1a       // 1.5V reference
 #define ADC_CAL_T85            0x1a1c       // 1.5V reference
+#define ADC_CAL_REF0_FACTOR    0x1a2c
 #define ADC_CAL_REF1_FACTOR    0x1a2a
 #define ADC_CAL_REF2_FACTOR    0x1a28
 #define ADC_CAL_GAIN_FACTOR    0x1a16
@@ -160,9 +169,11 @@ Notes on choice of values:
 #define TEMP_VREF              INTERNAL1V5
 #define TEMP_REF_DV            15             // deciVolts
 #define VCC_TYPE               VCC            // Measure 1.5V reference wrt Vcc
-#define VCC_CHAN               141            // 128+13 (1V5 Reference input channel)
-#define VCC_REF1               DEFAULT        // Use Vcc as the reference to measure 1V5
-#define VCC_REF2               0              // FR4133 does not have a 2nd reference
+#define VCC_CHAN               143            // 128+15 (Vcc Reference input channel)
+#define REF1_CHAN              141            // 128+13 (1V5 Reference input channel)
+#define VCC_REF0               DEFAULT
+#define VCC_REF1               INTERNAL1V5    // Use Vcc as the reference to measure 1V5
+#define VCC_REF2               DEFAULT        // FR4133 does not have a 2nd reference
 #define VCC_REF1_DV            15             // deciVolts
 #define VCC_REF2_DV            0              // FR4133 does not have a 2nd reference
 #define VCC_XOVER              0              // Single reference, so no crossover point
@@ -175,6 +186,7 @@ Notes on choice of values:
 #define ADC_STEPS              1023
 #define ADC_CAL_T30            0x1a1a         // 1.5V reference
 #define ADC_CAL_T85            0x1a1c         // 1.5V reference
+#define ADC_CAL_REF0_FACTOR    0              // Not available
 #define ADC_CAL_REF1_FACTOR    0x1a20
 #define ADC_CAL_REF2_FACTOR    0              // FR4133 does not have a 2nd reference
 #define ADC_CAL_GAIN_FACTOR    0x1a16
@@ -192,9 +204,9 @@ Notes on choice of values:
    ADC type:                              ADC12_B
    Voltage references available:          INTERNAL1V5
                                           INTERNAL2V0
-                                          INTERNAL2V5
+                                          INTERNAL2V5 (only used by MspAdc)
    Min Vcc for default system freq:       1.8 V
-   Min Vcc for INTERNAL2V5:               2.7 V (not used with this library)
+   Min Vcc for INTERNAL2V5:               2.7 V (only used by MspAdc)
    Min Vcc for INTERNAL2V0:               2.2 V
    Min Vcc for INTERNAL1V2:               1.8 V
 */
@@ -203,6 +215,8 @@ Notes on choice of values:
 #define TEMP_REF_DV            12           // deciVolts
 #define VCC_TYPE               VCCDIV2      // Measure Vcc/2 wrt internal voltage reference
 #define VCC_CHAN               159          // 128+31: A31 "Battery Monitor" AVcc/2
+#define REF1_CHAN              159          // Default to Vcc/2, since internal ref cannot be ADC input
+#define VCC_REF0               INTERNAL2V5
 #define VCC_REF1               INTERNAL2V0
 #define VCC_REF2               INTERNAL1V2
 #define VCC_REF1_DV            20        // deciVolts
@@ -214,6 +228,7 @@ Notes on choice of values:
 #define ADC_STEPS              4095
 #define ADC_CAL_T30            0x1a1a    // 1.2V reference
 #define ADC_CAL_T85            0x1a1c    // 1.2V reference
+#define ADC_CAL_REF0_FACTOR    0x1a2c    // 2.5 V reference
 #define ADC_CAL_REF1_FACTOR    0x1a2a    // 2.0 V reference
 #define ADC_CAL_REF2_FACTOR    0x1a28    // 1.2 V reference
 #define ADC_CAL_GAIN_FACTOR    0x1a16
@@ -238,9 +253,11 @@ Notes on choice of values:
 #define TEMP_VREF                 INTERNAL1V5
 #define TEMP_REF_DV               15          // deciVolts
 #define VCC_TYPE                  VCC         // Measure 1.5V reference wrt Vcc
-#define VCC_CHAN                  141         // 128+13: 1.5V reference channel
-#define VCC_REF1                  DEFAULT
-#define VCC_REF2                  0           // No REF2 with FR2433
+#define VCC_CHAN                  143         // 128+15: Vcc reference input channel
+#define REF1_CHAN                 141         // 128+13: 1V5 Reference input channel
+#define VCC_REF0                  DEFAULT
+#define VCC_REF1                  INTERNAL1V5
+#define VCC_REF2                  DEFAULT           // No REF2 with FR2433
 #define VCC_REF1_DV               15          // deciVolts
 #define VCC_REF2_DV               0           // deciVolts
 #define VCC_XOVER                 0           // Single reference, so no crossover
@@ -250,6 +267,7 @@ Notes on choice of values:
 #define ADC_STEPS                 1023
 #define ADC_CAL_T30               0x1a1a      // 1.5 V reference
 #define ADC_CAL_T85               0x1a1c      // 1.5 V reference
+#define ADC_CAL_REF0_FACTOR       0x0000      // Not available
 #define ADC_CAL_REF1_FACTOR       0x1a20      // 1.5 V reference
 #define ADC_CAL_REF2_FACTOR       0x1a20      // Not available for FR2433
 #define ADC_CAL_GAIN_FACTOR       0x1a16
@@ -265,11 +283,11 @@ Notes on choice of values:
       ADC description                     Ch. 34
       Calibrated temp measurement         1.14.3.3
    ADC type:                              ADC12_B
-   Voltage references available:          INTERNAL2V5    (not used with this library)
+   Voltage references available:          INTERNAL2V5    (only used by MspAdc)
                                           INTERNAL2V0
                                           INTERNAL1V2
    Min Vcc for default system freq:       1.8 V
-   Min Vcc for INTERNAL2V5:               2.7 V          (not used with this library)
+   Min Vcc for INTERNAL2V5:               2.7 V          (only used by MspAdc)
    Min Vcc for INTERNAL2V0:               2.2 V
    Min Vcc for INTERNAL1V2:               1.8 V
 */
@@ -278,6 +296,8 @@ Notes on choice of values:
 #define TEMP_REF_DV            12           // deciVolts
 #define VCC_TYPE               VCCDIV2      // Measure Vcc/2 wrt internal voltage reference
 #define VCC_CHAN               159          // 128+31: A31 "Battery Monitor" AVcc/2
+#define REF1_CHAN              159          // Default to Vcc/2, since internal ref cannot be ADC input
+#define VCC_REF0               INTERNAL2V5
 #define VCC_REF1               INTERNAL2V0
 #define VCC_REF2               INTERNAL1V2
 #define VCC_REF1_DV            20           // deciVolts
@@ -289,6 +309,7 @@ Notes on choice of values:
 #define ADC_STEPS              4095
 #define ADC_CAL_T30            0x1a1a       // 1.2V reference
 #define ADC_CAL_T85            0x1a1c       // 1.2V reference
+#define ADC_CAL_REF0_FACTOR    0x1a2c       // 2.5 V reference
 #define ADC_CAL_REF1_FACTOR    0x1a2a       // 2.0 V reference
 #define ADC_CAL_REF2_FACTOR    0x1a28       // 1.2 V reference
 #define ADC_CAL_GAIN_FACTOR    0x1a16

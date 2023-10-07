@@ -24,6 +24,7 @@
 #define MSPTANDV
 
 #include "MspTandV_variants.h"
+#include "Arduino.h"
 
 enum MEAS_TYPE {CAL_AND_UNCAL, CAL_ONLY};
 
@@ -55,6 +56,21 @@ private:
   int CalibratedVcc;       // milliVolts
   int UncalibratedVcc;     // milliVolts
   unsigned int Vref1Calibration;
+};
+
+class MspAdc {
+public:
+  MspAdc(uint8_t channel, uint8_t voltage_ref_number);
+  void read();
+  uint16_t getAdcCalibrated();
+  uint16_t getAdcRaw();
+
+private:
+  uint16_t CalibratedAdc;
+  uint16_t ADCraw;
+  uint16_t VrefCalibration;
+  uint8_t  _channel;
+  uint8_t  _voltage_ref;
 };
 
 enum VCC_TYPE {VCCDIV2, VCC};
