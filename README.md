@@ -3,7 +3,7 @@
 [//]: # ( The formulas in this writeup are rendered with GitHub's support of LaTeX formatted math expressions. See references [10] and [11]. Since these expressions can be difficult to read as plain text, there is a Markdown comment with a plaintext readable version before the LaTeX formatted expression.  )
 
 [![Arduino Compile Sketches](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/arduino-compile-sketches.yml)
-[![Check Markdown Links](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/CheckMarkdownLinks.yml)
+[![Check Markdown Links](https://github.com/Andy4495/MspTandV/actions/workflows/check-links.yml/badge.svg)](https://github.com/Andy4495/MspTandV/actions/workflows/check-links.yml)
 
 This library provides simple, easy-to-use functions to return the calibrated internal temperature and `Vcc` level on supported MSP430 processor types.
 
@@ -217,7 +217,6 @@ The software and other files in this repository are released under what is commo
 [1]: http://www.ti.com/lit/ds/symlink/msp430g2553.pdf
 [2]: http://www.ti.com/lit/ds/symlink/msp430g2112.pdf
 [3]: http://www.ti.com/lit/ds/symlink/msp430fr4133.pdf
-<!-- markdown-link-check-disable-next-line -->
 [7]: https://forum.43oh.com/topic/4094-msp430g2553-1mhz-or-16mhz-how-to-set-it/
 [8]: ./extras/43oh-MSP430g2553-1mhz.pdf
 [9]: ./examples/Calibrated_ADC/Calibrated_ADC.ino
