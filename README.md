@@ -197,18 +197,18 @@ The internal 2.5 V reference on the G2 devices needs a `Vcc` of at least 2.9V fo
 ## References
 
 - Texas Instruments E2E Forum thread regarding [ADC calibration](https://e2e.ti.com/support/microcontrollers/msp430/f/166/t/204428)
-- [43oh discussion][7] ([archived version][8]) on editing `boards.txt` to change the system frequency.
-- MSP430G2553 and MSP430G2452 [Family User's Guide](http://www.ti.com/lit/ug/slau144j/slau144j.pdf).
-- MSP430G2553 [Device Datasheet][1].
-- MSP430G2452 [Device Datasheet][2].
-- MSP430F5529 [Family User's Guide](http://www.ti.com/lit/pdf/slau208).
-- MSP430F5529 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430f5529.pdf).
-- MSP430FR4133 and MSP430FR2433 [Family User's Guide](http://www.ti.com/lit/ug/slau445i/slau445i.pdf).
-- MSP430FR4133 [Device Datasheet][3].
-- MSP430FR2433 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr2433.pdf).
-- MSP430FR6989 and MSP430FR5969 [Family User's Guide](https://www.ti.com/lit/ug/slau367p/slau367p.pdf).
-- MSP430FR6989 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr6989.pdf).
-- MSP430FR5969 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr5969.pdf).
+- [43oh discussion][7] ([archived version][8]) on editing `boards.txt` to change the system frequency
+- MSP430G2553 and MSP430G2452 [Family User's Guide](http://www.ti.com/lit/ug/slau144j/slau144j.pdf)
+- MSP430G2553 [Device Datasheet][1]
+- MSP430G2452 [Device Datasheet][2]
+- MSP430F5529 [Family User's Guide](http://www.ti.com/lit/pdf/slau208)
+- MSP430F5529 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430f5529.pdf)
+- MSP430FR4133 and MSP430FR2433 [Family User's Guide](http://www.ti.com/lit/ug/slau445i/slau445i.pdf)
+- MSP430FR4133 [Device Datasheet][3]
+- MSP430FR2433 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr2433.pdf)
+- MSP430FR6989 and MSP430FR5969 [Family User's Guide](https://www.ti.com/lit/ug/slau367p/slau367p.pdf)
+- MSP430FR6989 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr6989.pdf)
+- MSP430FR5969 [Device Datasheet](http://www.ti.com/lit/ds/symlink/msp430fr5969.pdf)
 
 ## License
 
